@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { downloadPDF, sendWhatsApp } from "../utils/generateInvoice";
 import { apiRequest } from "../utils/api";
+import { IconPDF, IconWhatsApp, IconTrash } from "./Icons";
 
 function InvoiceHistory({ invoices, setInvoices }) {
 
@@ -117,26 +118,27 @@ function InvoiceHistory({ invoices, setInvoices }) {
                                 <td style={{ fontWeight: '600', color: 'var(--accent-gold)', textAlign: 'center' }}>₹{inv.totalAmount ?? inv.total ?? 0}</td>
                                 <td className="actions-cell">
                                     <div className="actions">
+                                        {/* Icons imported from Icons.jsx with explicit hex colors */}
                                         <button
                                             className="action-btn primary"
                                             title="Download PDF"
                                             onClick={() => downloadPDF(inv)}
                                         >
-                                            📄
+                                            <IconPDF size={18} color="#60a5fa" />
                                         </button>
                                         <button
                                             className="action-btn success"
                                             title="Send WhatsApp"
                                             onClick={() => sendWhatsApp(inv)}
                                         >
-                                            💬
+                                            <IconWhatsApp size={18} color="#4ade80" />
                                         </button>
                                         <button
                                             className="action-btn delete"
                                             title="Delete Invoice"
                                             onClick={() => triggerDeleteModal(inv)}
                                         >
-                                            🗑️
+                                            <IconTrash size={18} color="#fb7185" />
                                         </button>
                                     </div>
                                 </td>

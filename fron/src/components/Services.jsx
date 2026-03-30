@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { apiRequest } from "../utils/api";
+import { IconCheck, IconX, IconEdit, IconTrash } from "./Icons";
 
 function Services({ services, setServices }) {
   const [editingId, setEditingId] = useState(null);
@@ -154,13 +155,13 @@ function Services({ services, setServices }) {
                 <td className="actions" style={{ textAlign: 'center' }}>
                   {editingId === s._id ? (
                     <div className="actions">
-                      <button className="action-btn success" title="Save Changes" onClick={saveEdit}>✅</button>
-                      <button className="action-btn delete" title="Cancel" onClick={() => setEditingId(null)}>❌</button>
+                      <button className="action-btn success" title="Save Changes" onClick={saveEdit}><IconCheck size={18} color="#4ade80" /></button>
+                      <button className="action-btn delete" title="Cancel" onClick={() => setEditingId(null)}><IconX size={18} color="#fb7185" /></button>
                     </div>
                   ) : (
                     <>
-                      <button className="action-btn edit" title="Edit" onClick={() => startEdit(s)}>✏️</button>
-                      <button className="action-btn delete" title="Delete" onClick={() => triggerDeleteModal(s)}>🗑️</button>
+                      <button className="action-btn edit" title="Edit" onClick={() => startEdit(s)}><IconEdit size={18} color="#d4af37" /></button>
+                      <button className="action-btn delete" title="Delete" onClick={() => triggerDeleteModal(s)}><IconTrash size={18} color="#fb7185" /></button>
                     </>
                   )}
                 </td>

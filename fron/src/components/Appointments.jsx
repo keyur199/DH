@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { generateInvoice } from "../utils/generateInvoice";
 import CustomDropdown from "./CustomDropdown";
 import { apiRequest } from "../utils/api";
+import { IconClipboard, IconEdit, IconTrash } from "./Icons";
 
 function Appointments({
   appointments,
@@ -264,7 +265,7 @@ function Appointments({
       </div>
 
       <div className="table-card appointments-card glass-card mt-25" style={{ padding: '20px' }}>
-        <h3 className="title-small mb-15"><span className="icon-gold">📋</span> Latest Appointments</h3>
+        <h3 className="title-small mb-15">Latest Appointments</h3>
         <div className="table-wrapper">
           <table className="premium-table" style={{ tableLayout: 'fixed', width: '100%' }}>
             <thead>
@@ -323,14 +324,14 @@ function Appointments({
                         title="Edit Appointment"
                         onClick={() => triggerEditModal(a)}
                       >
-                        ✏️
+                        <IconEdit size={18} color="#d4af37" />
                       </button>
                       <button
                         className="action-btn delete"
                         title="Delete Appointment"
                         onClick={() => triggerDeleteModal(a)}
                       >
-                        🗑️
+                        <IconTrash size={18} color="#fb7185" />
                       </button>
                     </td>
                   </tr>
