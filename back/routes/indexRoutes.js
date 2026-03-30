@@ -32,7 +32,7 @@ import {
     searchInvoices
 } from '../controllers/invoiceController.js';
 import { getCustomersDashboard } from '../controllers/customerController.js';
-import { getDashboardStats } from '../controllers/dashboardController.js';
+import { getDashboardStats, getRevenueGrowth, getTopServices } from '../controllers/dashboardController.js';
 import {
     createService,
     getAllServices,
@@ -91,6 +91,8 @@ indexRoutes.get('/getCustomersDashboard', UserAuth, getCustomersDashboard);
 // Dashboard Routes
 // =======================
 indexRoutes.get('/getDashboardStats', UserAuth, getDashboardStats);
+indexRoutes.get('/getRevenueGrowth', UserAuth, getRevenueGrowth);
+indexRoutes.get('/getTopServices', UserAuth, getTopServices);
 
 // =======================
 // Service Routes

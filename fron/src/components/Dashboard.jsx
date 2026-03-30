@@ -4,7 +4,6 @@ import { apiRequest } from "../utils/api";
 function Dashboard() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [allInvoices, setAllInvoices] = useState([]);
 
   const [stats, setStats] = useState({
     totalRevenue: 0,
@@ -15,109 +14,79 @@ function Dashboard() {
   const [topServices, setTopServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const setQuickFilter = (type) => {
+    const today = new Date();
+    const formatDate = (date) => {
+      const offset = date.getTimezoneOffset() * 60000;
+      return new Date(date.getTime() - offset).toISOString().split('T')[0];
+    };
+
+    if (type === 'today') {
+      const t = formatDate(today);
+      setStartDate(t);
+      setEndDate(t);
+    } else if (type === 'yesterday') {
+      const yesterday = new Date();
+      yesterday.setDate(today.getDate() - 1);
+      const yStr = formatDate(yesterday);
+      setStartDate(yStr);
+      setEndDate(yStr);
+    } else if (type === 'week') {
+      const lastWeek = new Date();
+      lastWeek.setDate(today.getDate() - 6);
+      setStartDate(formatDate(lastWeek));
+      setEndDate(formatDate(today));
+    } else if (type === 'month') {
+      const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      setStartDate(formatDate(startOfMonth));
+      setEndDate(formatDate(today));
+    } else if (type === 'all') {
+      setStartDate("");
+      setEndDate("");
+    }
+  };
+
   useEffect(() => {
-    fetchDashboardData();
+    fetchInitialData();
   }, []);
 
-  const fetchDashboardData = async () => {
+  const fetchInitialData = async () => {
     try {
       setLoading(true);
-      const invRes = await apiRequest("/getAllInvoices");
-      if (invRes.success) {
-        setAllInvoices(invRes.result);
-        applyFilters(invRes.result);
-      }
-    } catch (error) {
-      console.error("Dashboard Load Error:", error);
+      // Fetch static growth chart once
+      const growthRes = await apiRequest("/getRevenueGrowth");
+      if (growthRes.success) setMonthlyRevenue(growthRes.result);
+      
+      // Fetch initial stats
+      await fetchDynamicStats();
+    } catch (err) {
+      console.error("Initial load failed:", err);
     } finally {
       setLoading(false);
     }
   };
 
-    // NUMERIC DATE PARSER: Converts any date to YYYYMMDD integer for absolute comparison
-    const getDateVal = (input) => {
-      if (!input) return 0;
-      let dStr = String(input).split("T")[0].replace(/\//g, "-").trim();
-      const parts = dStr.split("-");
-      let y, m, d;
-      if (parts.length === 3) {
-        if (parts[0].length === 4) { [y, m, d] = parts; } 
-        else if (parts[2].length === 4) { [d, m, y] = parts; }
+  const fetchDynamicStats = async () => {
+    try {
+      const query = `?startDate=${startDate || ""}&endDate=${endDate || ""}`;
+      
+      const [statsRes, topRes] = await Promise.all([
+        apiRequest(`/getDashboardStats${query}`),
+        apiRequest(`/getTopServices${query}`)
+      ]);
+
+      if (statsRes.success) setStats(statsRes.result);
+      if (topRes.success) {
+        setTopServices(topRes.result.length > 0 ? topRes.result : [{ name: "No data in range", val: 0 }]);
       }
-      if (y && m && d) return parseInt(y) * 10000 + parseInt(m) * 100 + parseInt(d);
-      const dd = new Date(input);
-      if (isNaN(dd.getTime())) return 0;
-      return dd.getFullYear() * 10000 + (dd.getMonth() + 1) * 100 + dd.getDate();
-    };
-
-    const applyFilters = (invoices) => {
-      let filtered = [...invoices];
-      const startVal = getDateVal(startDate);
-      const endVal = getDateVal(endDate);
-
-      filtered = filtered.filter(inv => {
-        const invDateVal = getDateVal(inv.date) || getDateVal(inv.createdAt);
-        if (invDateVal === 0) return true;
-        if (startVal > 0 && invDateVal < startVal) return false;
-        if (endVal > 0 && invDateVal > endVal) return false;
-        return true;
-      });
-
-      // Stats
-      const totalRev = filtered.reduce((acc, inv) => acc + Number(inv.totalAmount || inv.total || 0), 0);
-      const uniqueCustomers = new Set(filtered.map(inv => inv.mobileNumber || inv.mobile)).size;
-      setStats({
-        totalRevenue: totalRev,
-        totalInvoices: filtered.length,
-        totalCustomers: uniqueCustomers
-      });
-
-      // Monthly
-      const monthsData = new Array(12).fill(0);
-      filtered.forEach(inv => {
-          let y, m, d;
-          let dStr = String(inv.date || inv.createdAt).split("T")[0].replace(/\//g, "-").trim();
-          const parts = dStr.split("-");
-          if (parts.length === 3) {
-              if (parts[0].length === 4) { [y, m, d] = parts; } 
-              else if (parts[2].length === 4) { [d, m, y] = parts; }
-              if (y && m) monthsData[parseInt(m) - 1] += Number(inv.totalAmount || inv.total || 0);
-          } else {
-              const fallback = new Date(inv.date || inv.createdAt);
-              if (!isNaN(fallback.getTime())) monthsData[fallback.getMonth()] += Number(inv.totalAmount || inv.total || 0);
-          }
-      });
-      setMonthlyRevenue(monthsData);
-
-      // 3. Service Performance
-      const serviceCounts = {};
-      let totalServiceCount = 0;
-      filtered.forEach(inv => {
-        const servicesToScan = inv.services || inv.items || [];
-        if (Array.isArray(servicesToScan)) {
-          servicesToScan.forEach(item => {
-            const sName = item.name || item.serviceName || "Unknown";
-            serviceCounts[sName] = (serviceCounts[sName] || 0) + 1;
-            totalServiceCount++;
-          });
-        }
-      });
-      const sortedServices = Object.entries(serviceCounts)
-        .map(([name, count]) => ({
-          name,
-          val: totalServiceCount > 0 ? Math.round((count / totalServiceCount) * 100) : 0
-        }))
-        .sort((a, b) => b.val - a.val)
-        .slice(0, 4);
-
-      setTopServices(sortedServices.length > 0 ? sortedServices : [{ name: "No data in range", val: 0 }]);
-    };
-
-  // Re-run filter when dates change
-  useEffect(() => {
-    if (allInvoices.length > 0) {
-      applyFilters(allInvoices);
+    } catch (err) {
+      console.error("Filtering failed:", err);
     }
+  };
+
+  // Re-fetch when filters change
+  useEffect(() => {
+    if (!loading) fetchDynamicStats();
   }, [startDate, endDate]);
 
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -132,18 +101,24 @@ function Dashboard() {
       <div className="dashboard-header-redux">
         <h1 className="page-title">Dashboard Overview</h1>
 
-        <div className="dashboard-filters">
-          <div className="filter-group">
-            <label>FROM</label>
-            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+        <div className="dashboard-filters-wrapper">
+          <div className="dashboard-filters">
+            <div className="filter-group">
+              <label>FROM</label>
+              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+            </div>
+            <div className="filter-group">
+              <label>TO</label>
+              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+            </div>
           </div>
-          <div className="filter-group">
-            <label>TO</label>
-            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+          <div className="quick-filters">
+            <button className={`q-btn ${startDate === "" ? 'active' : ''}`} onClick={() => setQuickFilter('all')}>ALL TIME</button>
+            <button className="q-btn" onClick={() => setQuickFilter('today')}>TODAY</button>
+            <button className="q-btn" onClick={() => setQuickFilter('yesterday')}>YESTERDAY</button>
+            <button className="q-btn" onClick={() => setQuickFilter('week')}>7 DAYS</button>
+            <button className="q-btn" onClick={() => setQuickFilter('month')}>THIS MONTH</button>
           </div>
-          {(startDate || endDate) && (
-            <button className="clear-filter-btn" onClick={() => { setStartDate(""); setEndDate(""); }}>✕ CLEAR</button>
-          )}
         </div>
       </div>
 

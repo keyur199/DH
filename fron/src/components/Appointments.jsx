@@ -71,7 +71,7 @@ function Appointments({
   /* BOOK APPOINTMENT */
   const bookAppointment = async () => {
     if (!customer || !mobile || !date || !time) {
-      alert("Please fill all details (Customer, Mobile, Date, Time)");
+      showAlert("Missing Details", "Please fill all details (Customer, Mobile, Date, Time)");
       return;
     }
 
@@ -82,7 +82,7 @@ function Appointments({
     })).filter(s => s.name !== "");
 
     if (formattedServices.length === 0) {
-      alert("Please select at least one service");
+      showAlert("No Services Selected", "Please select at least one service before booking");
       return;
     }
 
@@ -121,6 +121,7 @@ function Appointments({
         customerName: appnt.customerName,
         mobileNumber: appnt.mobileNumber,
         services: appnt.services,
+        date: appnt.date, // Pass the scheduled date
         appointmentId: id
       };
       const invRes = await apiRequest("/createInvoice", "POST", invoiceData);
@@ -129,21 +130,28 @@ function Appointments({
         fetchAppointments();
       }
     } catch (error) {
-      alert("Failed to complete appointment: " + error.message);
+      showAlert("Operation Failed", "Failed to complete appointment: " + error.message);
     }
   };
 
   /* REVERT TO PENDING (Deletes Invoice) */
   const revertToPending = async (id) => {
-    if (!window.confirm("Are you sure you want to revert this to Pending? The associated invoice will be deleted automatically.")) return;
-    try {
-      const res = await apiRequest(`/revertToPending/${id}`, "PUT");
-      if (res.success) {
-        fetchAppointments();
+    showConfirm(
+      "Revert Appointment?", 
+      "Are you sure you want to revert this to Pending? The associated invoice will be deleted automatically.",
+      async () => {
+          try {
+            const res = await apiRequest(`/revertToPending/${id}`, "PUT");
+            if (res.success) {
+              setAppointments(appointments.map(a => a._id === id ? res.result : a));
+              // Also update invoices list if needed (it will be missing now)
+              setInvoices(prev => prev.filter(inv => inv.appointmentId !== id));
+            }
+          } catch (err) {
+            console.error("Revert error:", err);
+          }
       }
-    } catch (error) {
-      alert("Failed to revert: " + error.message);
-    }
+    );
   };
 
   /* DELETE MODAL TRIGGERS */
@@ -161,8 +169,42 @@ function Appointments({
         setShowDeleteModal(false);
       }
     } catch (error) {
-      alert("Failed to delete appointment: " + error.message);
+      showAlert("Delete Failed", "Failed to delete appointment: " + error.message);
     }
+  };
+
+  const [searchDate, setSearchDate] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const [confirmModal, setConfirmModal] = useState({
+      show: false,
+      title: "",
+      message: "",
+      onConfirm: null,
+      type: 'confirm' // 'confirm' or 'alert'
+  });
+
+  const showAlert = (title, message) => {
+      setConfirmModal({
+          show: true,
+          title,
+          message,
+          onConfirm: () => setConfirmModal(prev => ({ ...prev, show: false })),
+          type: 'alert'
+      });
+  };
+
+  const showConfirm = (title, message, onConfirm) => {
+      setConfirmModal({
+          show: true,
+          title,
+          message,
+          onConfirm: () => {
+              onConfirm();
+              setConfirmModal(prev => ({ ...prev, show: false }));
+          },
+          type: 'confirm'
+      });
   };
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -179,25 +221,37 @@ function Appointments({
     setEditMobile(a.mobileNumber);
     setEditDate(a.date);
     setEditTime(a.time);
-    setEditServices(a.services || []);
+    // Deep clone to avoid direct state mutation
+    setEditServices(a.services ? a.services.map(s => ({ ...s })) : []);
     setShowEditModal(true);
   };
 
   const saveEdit = async () => {
     try {
+      // Validate and format services before saving
+      const formattedServices = editServices.map(s => ({
+        name: s.name?.trim() || "",
+        price: Number(s.price) || 0
+      })).filter(s => s.name !== "");
+
+      if (formattedServices.length === 0) {
+        showAlert("Validation Error", "Please select at least one service before saving edits.");
+        return;
+      }
+
       const res = await apiRequest(`/updateAppointment/${appointmentToEdit._id}`, "PUT", {
         customerName: editCustomer,
         mobileNumber: editMobile,
         date: editDate,
         time: editTime,
-        services: editServices
+        services: formattedServices
       });
       if (res.success) {
         fetchAppointments();
         setShowEditModal(false);
       }
     } catch (e) {
-      alert("Edit failed: " + e.message);
+      showAlert("Edit Failed", "The update could not be saved: " + e.message);
     }
   };
 
@@ -264,7 +318,51 @@ function Appointments({
       </div>
 
       <div className="table-card appointments-card glass-card mt-25" style={{ padding: '20px' }}>
-        <h3 className="title-small mb-15"><span className="icon-gold">📋</span> Latest Appointments</h3>
+        <div className="table-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+          <h3 className="title-small" style={{ margin: 0 }}><span className="icon-gold">📋</span> Latest Appointments</h3>
+          
+          <div className="table-filters" style={{ display: 'flex', gap: '12px' }}>
+            <div className="filter-item">
+              <input 
+                type="text" 
+                placeholder="Search by Name/Mobile..." 
+                value={searchTerm} 
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ 
+                  background: 'rgba(255,255,255,0.05)', 
+                  border: '1px solid rgba(255,255,255,0.1)', 
+                  color: 'white', 
+                  padding: '8px 12px', 
+                  borderRadius: '8px',
+                  fontSize: '0.85rem',
+                  width: '200px'
+                }}
+              />
+            </div>
+            <div className="filter-item" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--accent-gold)', fontWeight: '600' }}>DATE:</span>
+              <input 
+                type="date" 
+                value={searchDate} 
+                onChange={(e) => setSearchDate(e.target.value)}
+                style={{ 
+                  background: 'rgba(255,255,255,0.05)', 
+                  border: '1px solid rgba(255,255,255,0.1)', 
+                  color: 'white', 
+                  padding: '6px 10px', 
+                  borderRadius: '8px',
+                  fontSize: '0.85rem'
+                }}
+              />
+              {searchDate && (
+                <button 
+                  onClick={() => setSearchDate("")}
+                  style={{ background: 'transparent', border: 'none', color: '#fb7185', cursor: 'pointer', fontSize: '0.8rem' }}
+                >✕</button>
+              )}
+            </div>
+          </div>
+        </div>
         <div className="table-wrapper">
           <table className="premium-table" style={{ tableLayout: 'fixed', width: '100%' }}>
             <thead>
@@ -280,10 +378,28 @@ function Appointments({
               </tr>
             </thead>
             <tbody>
-              {appointments.length === 0 ? (
-                <tr><td colSpan="8" style={{ textAlign: 'center', padding: '40px', opacity: 0.5 }}>No appointments found.</td></tr>
+              {appointments
+                .filter(a => {
+                  const matchesDate = searchDate ? a.date === searchDate : true;
+                  const matchesSearch = searchTerm ? (
+                    (a.customerName?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+                    String(a.mobileNumber || "").includes(searchTerm)
+                  ) : true;
+                  return matchesDate && matchesSearch;
+                })
+                .length === 0 ? (
+                <tr><td colSpan="8" style={{ textAlign: 'center', padding: '40px', opacity: 0.5 }}>No matching appointments found.</td></tr>
               ) : (
-                appointments.map((a, idx) => (
+                appointments
+                  .filter(a => {
+                    const matchesDate = searchDate ? a.date === searchDate : true;
+                    const matchesSearch = searchTerm ? (
+                      (a.customerName?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+                      String(a.mobileNumber || "").includes(searchTerm)
+                    ) : true;
+                    return matchesDate && matchesSearch;
+                  })
+                  .map((a, idx) => (
                   <tr key={a._id} className="premium-row">
                     <td style={{ opacity: '0.6', textAlign: 'center' }}>{idx + 1}</td>
                     <td style={{ fontWeight: '600', color: 'var(--accent-gold)', textAlign: 'center' }}>{a.customerName}</td>
@@ -384,12 +500,163 @@ function Appointments({
                 />
               </div>
             </div>
-            <div className="modal-actions" style={{ marginTop: '30px' }}>
-              <button className="cancel-btn" onClick={() => setShowEditModal(false)}>Cancel</button>
-              <button className="book-btn" style={{ margin: 0, padding: '10px 20px' }} onClick={saveEdit}>Save Changes</button>
+
+            {/* SERVICES SECTION FOR EDIT MODAL */}
+            <div className="services-section-modal" style={{ 
+              marginTop: '25px', 
+              padding: '20px', 
+              background: 'rgba(255,255,255,0.02)', 
+              borderRadius: '16px',
+              border: '1px solid rgba(255,255,255,0.05)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+                <h4 style={{ color: 'var(--accent-gold)', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', letterSpacing: '1px', textTransform: 'uppercase', margin: 0 }}>
+                  <span style={{ fontSize: '1.2rem' }}>📋</span> SELECT SERVICES
+                </h4>
+                <button
+                  className="add-service-mini"
+                  onClick={() => setEditServices([...editServices, { name: "", price: "" }])}
+                  style={{
+                    background: 'rgba(74, 222, 128, 0.08)',
+                    color: '#4ade80',
+                    border: '1px solid rgba(74, 222, 128, 0.2)',
+                    padding: '6px 14px',
+                    borderRadius: '8px',
+                    fontSize: '0.75rem',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    textTransform: 'uppercase'
+                  }}
+                  onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(74, 222, 128, 0.15)'; }}
+                  onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(74, 222, 128, 0.08)'; }}
+                >
+                  + Add More
+                </button>
+              </div>
+
+              <div className="services-scroll-area" style={{ 
+                maxHeight: '220px', 
+                overflowY: 'auto', 
+                paddingRight: '6px',
+                paddingBottom: '80px' // Extra space for dropdown to open without clipping
+              }}>
+                {editServices.map((s, i) => (
+                  <div key={i} className="service-edit-row" style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 100px 40px',
+                    gap: '12px',
+                    marginBottom: '12px',
+                    alignItems: 'center',
+                    animation: 'fadeIn 0.3s ease'
+                  }}>
+                    <div className="input-group-modal">
+                      <CustomDropdown
+                        services={services}
+                        setServices={setServices}
+                        value={s.name}
+                        onChange={(val) => {
+                          const selected = services.find(srv => srv.name === val);
+                          const updated = [...editServices];
+                          updated[i].name = val;
+                          if (selected) {
+                            updated[i].price = selected.price;
+                          }
+                          setEditServices(updated);
+                        }}
+                      />
+                    </div>
+                    <div className="price-input-modal" style={{ position: 'relative' }}>
+                      <input
+                        type="number"
+                        placeholder="Price"
+                        value={s.price}
+                        onChange={(e) => {
+                          const updated = [...editServices];
+                          updated[i].price = e.target.value;
+                          setEditServices(updated);
+                        }}
+                        style={{
+                          width: '100%',
+                          height: '48px',
+                          borderRadius: '12px',
+                          background: 'rgba(0,0,0,0.3)',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          color: 'var(--accent-gold)',
+                          padding: '0 8px',
+                          fontSize: '1rem',
+                          textAlign: 'center',
+                          fontWeight: '600',
+                          fontFamily: 'monospace'
+                        }}
+                      />
+                    </div>
+                    <button
+                      className="remove-btn-modal"
+                      title="Remove Row"
+                      style={{
+                        width: '36px',
+                        height: '36px',
+                        padding: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: '10px',
+                        background: 'rgba(251, 113, 133, 0.08)',
+                        color: '#fb7185',
+                        border: '1px solid rgba(251, 113, 133, 0.2)',
+                        cursor: 'pointer',
+                        fontSize: '0.9rem',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(251, 113, 133, 0.2)'; e.currentTarget.style.transform = 'scale(1.1)'; }}
+                      onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(251, 113, 133, 0.08)'; e.currentTarget.style.transform = 'scale(1)'; }}
+                      onClick={() => {
+                        const updated = editServices.filter((_, idx) => idx !== i);
+                        setEditServices(updated);
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="modal-actions" style={{ marginTop: '25px', display: 'flex', gap: '15px' }}>
+              <button className="cancel-btn" style={{ flex: 1, height: '48px' }} onClick={() => setShowEditModal(false)}>Cancel</button>
+              <button className="book-btn" style={{ flex: 2, height: '48px', margin: 0 }} onClick={saveEdit}>Save Changes</button>
             </div>
           </div>
         </div>
+      )}
+      {/* GENERIC CONFIRMATION / ALERT MODAL */}
+      {confirmModal.show && (
+          <div className="modal-overlay" style={{ zIndex: 300000 }}>
+              <div className="confirm-modal animate-in" style={{ maxWidth: '400px' }}>
+                  <h3 style={{ color: 'var(--accent-gold)', marginBottom: '15px' }}>{confirmModal.title}</h3>
+                  <p style={{ color: 'white', opacity: 0.8, marginBottom: '25px', lineHeight: '1.5' }}>{confirmModal.message}</p>
+                  
+                  <div style={{ display: 'flex', gap: '12px' }}>
+                      {confirmModal.type === 'confirm' && (
+                          <button 
+                              className="cancel-btn" 
+                              style={{ flex: 1, padding: '12px' }}
+                              onClick={() => setConfirmModal(prev => ({ ...prev, show: false }))}
+                          >
+                              Cancel
+                          </button>
+                      )}
+                      <button 
+                          className="book-btn" 
+                          style={{ flex: 1, margin: 0, padding: '12px', background: 'var(--accent-gold)', color: 'black' }}
+                          onClick={confirmModal.onConfirm}
+                      >
+                          {confirmModal.type === 'confirm' ? 'Confirm' : 'OK'}
+                      </button>
+                  </div>
+              </div>
+          </div>
       )}
     </div>
   );

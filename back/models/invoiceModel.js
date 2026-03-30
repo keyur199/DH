@@ -11,6 +11,7 @@ const invoiceSchema = mongoose.Schema({
     mobileNumber: { type: Number, required: true },
     services: [invoiceItemSchema],
     totalAmount: { type: Number, default: 0 },
+    date: { type: String, required: true },
     invoiceId: { type: String, unique: true },
     appointmentId: { type: mongoose.Schema.Types.ObjectId, ref: "Appointment", default: null },
     pdfUrl: { type: String, default: null }

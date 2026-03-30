@@ -7,6 +7,7 @@ function Billing({ setInvoices, setCustomers, services, setServices }) {
 
   const [customer, setCustomer] = useState("");
   const [mobile, setMobile] = useState("");
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
 
   const [items, setItems] = useState([
     { name: "", qty: 1, price: 0 }
@@ -35,7 +36,12 @@ function Billing({ setInvoices, setCustomers, services, setServices }) {
       return;
     }
 
-    const invoice = generateInvoice(customer, mobile, items);
+    const invoice = {
+        customerName: customer,
+        mobileNumber: mobile,
+        services: items.map(i => ({ name: i.name, quantity: i.qty, price: i.price })),
+        date: date
+    };
 
     try {
       // Save Invoice to Backend
@@ -54,6 +60,7 @@ function Billing({ setInvoices, setCustomers, services, setServices }) {
         // Reset form
         setCustomer("");
         setMobile("");
+        setDate(new Date().toISOString().split('T')[0]);
         setItems([{ name: "", qty: 1, price: 0 }]);
       }
     } catch (error) {
@@ -75,6 +82,18 @@ function Billing({ setInvoices, setCustomers, services, setServices }) {
             placeholder="Mobile Number"
             value={mobile}
             onChange={(e) => setMobile(e.target.value)}
+          />
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            style={{ 
+              background: 'rgba(255,255,255,0.02)', 
+              border: '1px solid rgba(255,255,255,0.1)', 
+              color: 'white', 
+              padding: '12px', 
+              borderRadius: '10px' 
+            }}
           />
         </div>
 

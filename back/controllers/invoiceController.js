@@ -5,10 +5,10 @@ import { generateInvoicePDF } from '../utils/pdfUtils.js';
 
 export const createInvoice = async (req, res) => {
     try {
-        const { customerName, mobileNumber, services } = req.body;
+        const { customerName, mobileNumber, services, date } = req.body;
 
-        if (!customerName || !mobileNumber || !services || services.length === 0) {
-            return sendBadRequestResponse(res, "Customer Name, Mobile Number, and at least one Service are required");
+        if (!customerName || !mobileNumber || !services || services.length === 0 || !date) {
+            return sendBadRequestResponse(res, "Customer Name, Mobile Number, Date, and at least one Service are required");
         }
 
         let totalAmount = 0;
@@ -26,6 +26,7 @@ export const createInvoice = async (req, res) => {
             mobileNumber,
             services,
             totalAmount,
+            date,
             invoiceId: nextInvoiceId,
             appointmentId: req.body.appointmentId || null
         });
