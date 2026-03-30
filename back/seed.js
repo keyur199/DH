@@ -5,7 +5,7 @@ import Register from "./models/registerModel.js";
 
 dotenv.config();
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/pro_billing')
+mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/DH')
   .then(async () => {
     console.log('Connected to MongoDB');
     try {

@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 
 const migrate = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/pro_billing');
+        await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/DH');
         console.log("Connected to MongoDB for migration...");
 
         const invoices = await Invoice.find().sort({ createdAt: 1 });
