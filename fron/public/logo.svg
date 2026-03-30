@@ -1,0 +1,20 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Circular Border -->
+  <circle cx="100" cy="100" r="95" stroke="black" stroke-width="2" fill="white" />
+  
+  <!-- Curved text path for 'LUXURY BEAUTY' -->
+  <path id="curve" d="M 30 100 A 70 70 0 0 1 170 100" fill="transparent" />
+  <text font-family="Serif" font-size="14" fill="black" text-anchor="middle" letter-spacing="2">
+    <textPath href="#curve" startOffset="50%">LUXURY BEAUTY</textPath>
+  </text>
+  
+  <!-- Side Stars -->
+  <path d="M 35 110 L 40 105 L 45 110 L 40 115 Z" fill="black" />
+  <path d="M 165 110 L 160 105 L 155 110 L 160 115 Z" fill="black" />
+  
+  <!-- Center Emblem (Modern Shield/Cap) -->
+  <path d="M 75 90 C 75 75 125 75 125 90 L 125 145 C 125 155 75 155 75 145 Z" fill="black" />
+  
+  <!-- DH Initial -->
+  <text x="100" y="128" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="white">DH</text>
+</svg>
