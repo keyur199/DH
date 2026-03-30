@@ -402,18 +402,18 @@ function Appointments({
                   })
                   .map((a, idx) => (
                   <tr key={a._id} className="premium-row">
-                    <td style={{ opacity: '0.6', textAlign: 'center' }}>{idx + 1}</td>
-                    <td style={{ fontWeight: '600', color: 'var(--accent-gold)', textAlign: 'center' }}>{a.customerName}</td>
-                    <td style={{ letterSpacing: '0.5px', fontSize: '0.9rem', textAlign: 'center' }}>{a.mobileNumber}</td>
-                    <td
+                    <td data-label="#" style={{ opacity: '0.6', textAlign: 'center' }}>{idx + 1}</td>
+                    <td data-label="CUSTOMER" style={{ fontWeight: '600', color: 'var(--accent-gold)', textAlign: 'center' }}>{a.customerName}</td>
+                    <td data-label="MOBILE" style={{ letterSpacing: '0.5px', fontSize: '0.9rem', textAlign: 'center' }}>{a.mobileNumber}</td>
+                    <td data-label="SERVICES"
                       title={a.services?.map(s => s.name).join(", ")}
                       style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'center' }}
                     >
                       {a.services?.map(s => s.name).join(", ")}
                     </td>
-                    <td style={{ whiteSpace: "nowrap", fontSize: '0.85rem', textAlign: 'center' }}>{a.date}</td>
-                    <td style={{ whiteSpace: "nowrap", fontSize: '0.85rem' }}>{formatTime(a.time)}</td>
-                    <td className="centered-cell">
+                    <td data-label="DATE" style={{ whiteSpace: "nowrap", fontSize: '0.85rem', textAlign: 'center' }}>{a.date}</td>
+                    <td data-label="TIME" style={{ whiteSpace: "nowrap", fontSize: '0.85rem' }}>{formatTime(a.time)}</td>
+                    <td data-label="STATUS" className="centered-cell">
                       <div className="status-wrapper">
                         {a.status === "Completed" ? (
                           <button
@@ -434,7 +434,7 @@ function Appointments({
                         )}
                       </div>
                     </td>
-                    <td className="actions" style={{ textAlign: 'center' }}>
+                    <td data-label="ACTIONS" className="actions" style={{ textAlign: 'center' }}>
                       <button
                         className="action-btn edit"
                         title="Edit Appointment"

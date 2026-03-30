@@ -78,11 +78,11 @@ function Customers() {
                             <tbody>
                                 {currentItems.map((c, i) => (
                                     <tr key={i} className="premium-row">
-                                        <td style={{ textAlign: 'center', opacity: 0.6 }}>{i + 1 + indexOfFirstItem}</td>
-                                        <td style={{ fontWeight: '500', color: 'var(--accent-gold)', textAlign: 'center' }}>{c.customerName || "N/A"}</td>
-                                        <td style={{ textAlign: 'center' }}>{c.mobileNumber}</td>
-                                        <td style={{ textAlign: 'center' }}>{c.totalVisits}</td>
-                                        <td style={{ fontWeight: '600', color: 'var(--accent-gold)', textAlign: 'center' }}>₹{c.totalSpent}</td>
+                                        <td data-label="#" style={{ textAlign: 'center', opacity: 0.6 }}>{i + 1 + indexOfFirstItem}</td>
+                                        <td data-label="NAME" style={{ fontWeight: '500', color: 'var(--accent-gold)', textAlign: 'center' }}>{c.customerName || "N/A"}</td>
+                                        <td data-label="MOBILE" style={{ textAlign: 'center' }}>{c.mobileNumber}</td>
+                                        <td data-label="VISITS" style={{ textAlign: 'center' }}>{c.totalVisits}</td>
+                                        <td data-label="SPENT" style={{ fontWeight: '600', color: 'var(--accent-gold)', textAlign: 'center' }}>₹{c.totalSpent}</td>
                                     </tr>
                                 ))}
                                 {currentItems.length === 0 && (

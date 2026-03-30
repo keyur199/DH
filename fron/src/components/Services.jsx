@@ -126,8 +126,8 @@ function Services({ services, setServices }) {
           <tbody>
             {currentItems.map((s, idx) => (
               <tr key={s._id} className="premium-row">
-                <td>{idx + 1 + indexOfFirstItem}</td>
-                <td style={{ textAlign: 'center' }}>
+                <td data-label="#">{idx + 1 + indexOfFirstItem}</td>
+                <td data-label="SERVICE" style={{ textAlign: 'center' }}>
                   {editingId === s._id ? (
                     <input 
                       className="edit-input"
@@ -139,7 +139,7 @@ function Services({ services, setServices }) {
                     s.name
                   )}
                 </td>
-                <td style={{ textAlign: 'center' }}>
+                <td data-label="PRICE" style={{ textAlign: 'center' }}>
                   {editingId === s._id ? (
                     <input 
                       className="edit-input"
@@ -152,7 +152,7 @@ function Services({ services, setServices }) {
                     `₹ ${s.price}`
                   )}
                 </td>
-                <td className="actions" style={{ textAlign: 'center' }}>
+                <td data-label="ACTIONS" className="actions" style={{ textAlign: 'center' }}>
                   {editingId === s._id ? (
                     <div className="actions">
                       <button className="action-btn success" title="Save Changes" onClick={saveEdit}><IconCheck size={18} color="#4ade80" /></button>

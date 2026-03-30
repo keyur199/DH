@@ -741,6 +741,12 @@ h3 {
     border-left: 4px solid var(--accent-blue);
 }
 
+.card-icon {
+    margin-bottom: 22px !important;
+    display: flex;
+    align-items: center;
+}
+
 .card h3,
 .dashboard-card h3 {
     margin-bottom: 12px;
@@ -2528,6 +2534,13 @@ tr:hover td {
     background: transparent !important;
 }
 
+.dashboard-filters-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-end;
+}
+
 .dashboard-filters {
     display: flex;
     align-items: flex-end;
@@ -2537,6 +2550,40 @@ tr:hover td {
     border-radius: 16px;
     border: 1px solid var(--card-border);
     backdrop-filter: blur(10px);
+}
+
+.quick-filters {
+    display: flex;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 6px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.q-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+}
+
+.q-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.q-btn.active {
+    background: var(--accent-gold);
+    color: #000;
+    box-shadow: none !important; /* Removed distracting glow */
 }
 
 .filter-group {
@@ -2592,3 +2639,407 @@ tr:hover td {
 .animate-in {
     animation: fadeIn 0.4s ease-out forwards;
 }
+
+/* BASE MOBILE HEADER CLASSES */
+.mobile-toggle-header {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    z-index: 5000;
+    padding: 0 15px;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.mini-logo-box {
+    width: 44px;
+    height: 44px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--accent-gold);
+    overflow: hidden;
+}
+
+.mini-logo-img {
+    width: 85%;
+    height: 85%;
+    object-fit: contain;
+}
+
+.menu-toggle-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-gold);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none !important;
+}
+
+/* ============================================================ 
+   100% UNIVERSAL "PROPERLY PERFECT" RESPONSIVE ARCHITECTURE
+   ============================================================ */
+
+/* [1] DESKTOP POWERHOUSE (1024px - 8K+) */
+@media (min-width: 1024px) {
+    .mobile-toggle-header { display: none !important; }
+    .sidebar { 
+        position: fixed !important; 
+        top: 0 !important;
+        left: 0 !important;
+        width: 220px !important; 
+        height: 100vh !important;
+        display: flex !important;
+        flex-direction: column !important;
+        border-right: none !important; /* Removed vertical white line */
+        z-index: 1000 !important;
+        background: #000 !important;
+    }
+    .main, .main-content { 
+        margin-left: 220px !important; 
+        width: calc(100vw - 220px) !important; 
+        padding: 60px 40px !important;
+        display: block !important;
+    }
+    .dashboard-header-redux { flex-direction: row !important; align-items: flex-end !important; justify-content: space-between !important; }
+    .cards { grid-template-columns: repeat(3, 1fr) !important; gap: 20px !important; }
+}
+
+/* [2] ULTRA 4K ADJUSTMENT (1920px+) */
+@media (min-width: 1920px) {
+    .sidebar { width: 340px !important; }
+    .main, .main-content { margin-left: 340px !important; width: calc(100vw - 340px) !important; padding: 80px 100px !important; }
+}
+
+/* [3] BOUTIQUE TABLET DRAWERS (768px - 1023px) */
+@media (max-width: 1023px) and (min-width: 768px) {
+    .mobile-toggle-header { display: flex !important; }
+    .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        /* left: -320px !important;  */
+        width: 300px !important;
+        height: 100vh !important;
+        z-index: 50000 !important; 
+        background: #000 !important;
+        border-right: none !important; /* Removed vertical white line */
+        padding-top: 100px !important;
+        box-shadow: 20px 0 80px rgba(0,0,0,1) !important;
+    }
+    .sidebar.open { left: 0 !important; }
+    .sidebar.open::after { content: ''; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); z-index: -1; pointer-events: none; }
+
+    .main, .main-content { padding: 110px 40px 40px !important; width: 100vw !important; box-sizing: border-box !important; }
+    
+    /* Horizontal Ribbon for Tablet too */
+    .quick-filters { 
+        display: flex !important; 
+        flex-direction: row !important; 
+        overflow-x: auto !important; 
+        flex-wrap: nowrap !important;
+        width: 100% !important; 
+        padding: 5px !important; 
+        gap: 15px !important;
+        scrollbar-width: none !important;
+    }
+    .quick-filters::-webkit-scrollbar { display: none !important; }
+    .q-btn { min-width: 130px !important; flex-shrink: 0 !important; padding: 12px !important; }
+    
+    .cards { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+/* [4] UNIVERSAL MOBILE LOCKDOWN (Under 768px) */
+@media (max-width: 767px) {
+    html, body, .app { overflow-x: hidden !important; width: 100vw !important; max-width: 100vw !important; }
+    
+    /* UNIVERSAL HEADER SYMMETRY LOCKDOWN */
+    .mobile-toggle-header { 
+        display: flex !important; 
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 70px !important;
+        background: #000 !important;
+        border-bottom: 2px solid var(--accent-gold) !important;
+        padding: 0 16px !important; /* Proper Edge Breathing Room */
+        justify-content: space-between !important;
+        align-items: center !important;
+        z-index: 40000 !important;
+        box-sizing: border-box !important;
+    }
+    
+    .mini-logo-box { flex: 0 1 auto !important; }
+    .menu-toggle-btn { flex: 0 1 auto !important; min-width: 44px !important; display: flex !important; justify-content: flex-end !important; }
+    .mini-logo-img { height: 40px !important; width: 40px !important; border-radius: 50% !important; border: 2px solid var(--accent-gold) !important; }
+
+    .sidebar { 
+        position: fixed !important; 
+        top: 0 !important;
+        left: -320px !important; 
+        width: 280px !important; 
+        height: 100vh !important;
+        z-index: 50000 !important; 
+        background: #000 !important;
+        padding: 95px 25px 40px !important;
+        border-right: none !important; /* Removed vertical white line */
+        box-shadow: 20px 0 100px rgba(0,0,0,1) !important; 
+    }
+    .sidebar.open { left: 0 !important; }
+    .sidebar.open::after { content: ''; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); z-index: -1; pointer-events: none; }
+
+    .main, .main-content { padding: 100px 15px 40px !important; width: 100vw !important; box-sizing: border-box !important; }
+    
+    /* DASHBOARD RIBBON FIX: Eliminate Vertical Stack Fatigue */
+    .dashboard-header-redux { flex-direction: column !important; align-items: stretch !important; gap: 20px !important; }
+    .dashboard-filters-wrapper { width: 100% !important; display: flex !important; flex-direction: column !important; gap: 20px !important; }
+    .dashboard-filters { flex-direction: column !important; width: 100% !important; gap: 15px !important; }
+    
+    /* UNIVERSAL MANAGEMENT FORM STACKING LOCKDOWN */
+    .service-row, 
+    .service-row .input-group { 
+        display: flex !important;
+        flex-direction: column !important; 
+        gap: 12px !important; 
+        width: 100% !important;
+    }
+    .service-row {
+        padding: 20px !important; 
+        background: rgba(255,255,255,0.03) !important; 
+        border-radius: 16px !important; 
+        border: 1px solid rgba(255,255,255,0.05) !important;
+        margin-bottom: 20px !important;
+    }
+    .service-row select, 
+    .service-row input, 
+    .service-row .remove-btn,
+    .service-row .custom-dropdown,
+    .service-row .input-group input { 
+        width: 100% !important; 
+        height: 52px !important; 
+        font-size: 1rem !important;
+    }
+
+    /* DROPDOWN OVERFLOW VIZIBILITY LOCKDOWN */
+    .booking-card, .appointments-card, .table-card, .services-section, .input-group { 
+        overflow: visible !important; 
+    }
+    .custom-dropdown { position: relative !important; z-index: 5000 !important; }
+    .dropdown-list { 
+        position: absolute !important; 
+        top: 100% !important; 
+        left: 0 !important; 
+        width: 100% !important; 
+        z-index: 10000 !important; 
+        background: #1a1a1a !important; 
+        border: 1px solid var(--accent-gold) !important;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.8) !important;
+    }
+
+    .quick-filters { 
+        display: flex !important; 
+        flex-direction: row !important; 
+        overflow-x: auto !important; 
+        flex-wrap: nowrap !important;
+        width: 100% !important; 
+        padding: 5px !important; 
+        gap: 10px !important;
+        scrollbar-width: none !important;
+    }
+    .quick-filters::-webkit-scrollbar { display: none !important; }
+    .q-btn { min-width: 110px !important; flex-shrink: 0 !important; padding: 12px !important; font-size: 0.75rem !important; }
+
+    /* Cards Stacking */
+    .cards, .dashboard-charts { display: flex !important; flex-direction: column !important; gap: 20px !important; }
+    
+    /* FLUID BOUTIQUE DATA SYMMETRY: Smart Wrap */
+    .premium-table thead { display: none !important; }
+    .premium-table tr { display: block !important; margin-bottom: 20px !important; background: rgba(255,255,255,0.03) !important; border-radius: 18px !important; padding: 15px 15px !important; border: 1px solid var(--card-border) !important; }
+    .premium-table td { display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: flex-start !important; border: none !important; border-bottom: 1px solid rgba(255,255,255,0.04) !important; padding: 10px 0 !important; min-height: 44px !important; gap: 15px !important; box-sizing: border-box !important; }
+    .premium-table td::before { content: attr(data-label); font-weight: 800; color: var(--accent-gold); font-size: 0.55rem; letter-spacing: 1px; margin-top: 4px !important; text-transform: uppercase; text-align: left !important; min-width: 70px !important; flex-shrink: 0 !important; }
+    
+    /* The Value Hub: Smart Visibility */
+    .premium-table td span, 
+    .premium-table td div:not(.status-wrapper):not(.actions) { 
+        flex: 1 !important; 
+        text-align: right !important; 
+        font-size: 0.9rem !important; 
+        color: #fff !important;
+        white-space: normal !important; 
+        word-break: break-word !important;
+        line-height: 1.4 !important;
+    }
+
+    /* Fixed statistics should not wrap but should not clip aggressively */
+    .premium-table td[data-label="MOBILE"] span,
+    .premium-table td[data-label="DATE"] span,
+    .premium-table td[data-label="TIME"] span {
+        white-space: nowrap !important;
+        overflow: visible !important;
+    }
+    
+    .premium-table td:last-child { flex-direction: row !important; border: none !important; justify-content: center !important; gap: 12px !important; padding-top: 15px !important; min-height: auto !important; }
+    .premium-table td:last-child::before { display: none !important; }
+    
+    /* TABLE FILTER STACKING LOCKDOWN */
+    .table-filters { flex-direction: column !important; width: 100% !important; gap: 15px !important; }
+    .table-filters .filter-item { width: 100% !important; display: flex !important; flex-direction: column !important; gap: 5px !important; align-items: stretch !important; }
+    .table-filters .filter-item label { text-align: left !important; font-size: 0.7rem !important; color: var(--accent-gold) !important; font-weight: 700 !important; }
+    .table-filters input, .table-filters select { width: 100% !important; height: 50px !important; box-sizing: border-box !important; }
+
+    /* Form Lockdown */
+    .form-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+    .service-row.booking { display: flex !important; flex-direction: column !important; gap: 12px !important; }
+    input, select, textarea, button { width: 100% !important; height: 52px !important; font-size: 1rem !important; }
+}
+
+/* [5] EXTREME MOBILE (320px - 425px) */
+@media (max-width: 425px) {
+    .main, .main-content { padding: 165px 12px 30px !important; }
+    
+    /* TABLE HEADER STACKING LOCKDOWN */
+    .table-header-row { flex-direction: column !important; align-items: stretch !important; gap: 15px !important; }
+    .table-filters { width: 100% !important; justify-content: flex-start !important; }
+
+    .dashboard-header-redux { display: flex !important; flex-direction: column !important; gap: 10px !important; margin-top: 5px !important; }
+    .page-title { font-size: 1.4rem !important; display: block !important; visibility: visible !important; color: var(--accent-gold) !important; margin-bottom: 10px !important; text-align: center !important; }
+
+    /* BOUTIQUE BUTTON SYMMETRY FIX */
+    .book-btn, .appointment-btn, .add-service-btn, .add-btn { 
+        height: 50px !important; 
+        font-size: 0.9rem !important; 
+        padding: 0 20px !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    /* DROPDOWN COMPACTION FOR MOBILE */
+    .dropdown-list { max-height: 220px !important; }
+    .dropdown-item { padding: 12px 14px !important; }
+
+    .dashboard-filters { display: flex !important; flex-direction: column !important; gap: 8px !important; padding: 10px !important; width: 100% !important; }
+    .filter-group { display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: space-between !important; gap: 10px !important; }
+    .filter-group label { font-size: 0.6rem !important; min-width: 40px !important; color: #fff !important; }
+    .filter-group input { height: 44px !important; flex: 1 !important; font-size: 0.9rem !important; }
+
+    .quick-filters { margin-top: 10px !important; }
+    
+    /* EXTREME SLIM BOUTIQUE DRAWER LOCKDOWN */
+    .sidebar { 
+        width: 255px !important; 
+        max-width: 80vw !important; 
+        padding: 95px 25px 40px !important; /* Balanced for immediate visibility */
+        align-items: center !important; 
+        text-align: center !important;
+        border-right: none !important;
+        overflow-y: auto !important;
+        scrollbar-width: none !important;
+    }
+    .sidebar::-webkit-scrollbar { display: none !important; }
+    .sidebar .logo { margin-bottom: 30px !important; width: 100% !important; display: flex !important; justify-content: center !important; visibility: visible !important; }
+    .nav-logo-container { width: 90px !important; height: 90px !important; margin: 0 auto !important; border: 2px solid var(--accent-gold) !important; display: flex !important; visibility: visible !important; }
+    .menu { width: 100% !important; align-items: center !important; margin-bottom: 30px !important; }
+    .menu button { text-align: center !important; font-size: 1.1rem !important; padding: 15px !important; width: 85% !important; border-radius: 40px !important; margin: 0 auto 10px !important; }
+    .menu button.active { padding-left: 15px !important; background: rgba(212, 175, 55, 0.1) !important; border: 1px solid var(--accent-gold) !important; }
+    .menu button.active::before { display: none !important; }
+
+    /* Ensure Toggle Header Symmetry is Absolute */
+    .mobile-toggle-header { z-index: 60000 !important; padding: 0 16px !important; justify-content: space-between !important; display: flex !important; }
+
+    .card h3 { font-size: 0.9rem !important; }
+    .card p { font-size: 1.6rem !important; }
+
+    /* FORM ROW STACKING LOCKDOWN */
+    .service-row.booking, 
+    .service-row.booking .input-group { 
+        display: flex !important;
+        flex-direction: column !important; 
+        gap: 12px !important; 
+        width: 100% !important;
+    }
+    .service-row.booking {
+        padding: 20px !important; 
+        background: rgba(255,255,255,0.03) !important; 
+        border-radius: 16px !important; 
+        border: 1px solid rgba(255,255,255,0.05) !important;
+        margin-bottom: 15px !important;
+    }
+    .service-row.booking select, 
+    .service-row.booking input, 
+    .service-row.booking .remove-btn,
+    .service-row.booking .custom-dropdown { 
+        width: 100% !important; 
+        height: 50px !important; 
+        font-size: 0.95rem !important;
+    }
+    
+    .add-service-btn, .book-btn, .appointment-btn, .add-btn { 
+        width: 100% !important; 
+        border-radius: 50px !important; 
+        font-size: 1rem !important;
+        margin-top: 15px !important;
+        height: 54px !important;
+    }
+
+    /* THEME PICKER CIRCULAR SYMMETRY */
+    .theme-picker { 
+        display: grid !important; 
+        grid-template-columns: repeat(4, 1fr) !important; 
+        gap: 12px !important; 
+        padding: 5px !important; 
+        width: 100% !important;
+        justify-items: center !important;
+    }
+    .theme-btn { 
+        width: 34px !important; 
+        height: 34px !important; 
+        border-radius: 50% !important; 
+        border: 2px solid rgba(255,255,255,0.1) !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    .active-theme { border-color: #fff !important; transform: scale(1.1) !important; }
+
+    /* CHART VISIBILITY LOCKDOWN */
+    .dashboard-charts { width: 100% !important; gap: 30px !important; display: flex !important; flex-direction: column !important; }
+    .chart-card { 
+        width: 100% !important; 
+        min-height: 400px !important; /* Proper height for graphs */
+        background: rgba(0,0,0,0.5) !important;
+        border-radius: 24px !important;
+        padding: 25px 20px !important;
+        border: 1px solid var(--accent-gold) !important;
+        box-sizing: border-box !important;
+    }
+    .chart-header h3 { margin-bottom: 30px !important; text-align: center !important; font-size: 1.1rem !important; }
+
+    /* REVENUE BAR RIBBON FIX */
+    .bar-container {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-end !important;
+        justify-content: flex-start !important;
+        height: 250px !important;
+        gap: 15px !important;
+        overflow-x: auto !important; /* Horizontal Scroll Ribbon */
+        padding-bottom: 10px !important;
+        scrollbar-width: none !important;
+    }
+    .bar-container::-webkit-scrollbar { display: none !important; }
+    .bar-wrapper { min-width: 45px !important; flex-shrink: 0 !important; }
+    .bar { width: 100% !important; border-radius: 6px 6px 0 0 !important; }
+    .bar-label { font-size: 0.65rem !important; margin-top: 10px !important; }
+}
+

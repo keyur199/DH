@@ -104,40 +104,27 @@ function InvoiceHistory({ invoices, setInvoices }) {
                             if (!inv) return null;
                             return (
                             <tr key={inv._id || idx} className="premium-row">
-                                <td style={{ textAlign: 'center' }}>{idx + 1 + indexOfFirstItem}</td>
-                                <td style={{ fontSize: '0.85rem', color: 'var(--accent-gold)', textAlign: 'center' }}>{inv.invoiceId || `#${(inv._id || "********").substring(0, 8)}`}</td>
-                                <td style={{ fontWeight: '500', textAlign: 'center' }}>{inv.customerName}</td>
-                                <td style={{ textAlign: 'center' }}>{inv.mobileNumber || inv.mobile}</td>
-                                <td 
+                                <td data-label="#" style={{ textAlign: 'center' }}>{idx + 1 + indexOfFirstItem}</td>
+                                <td data-label="INV ID" style={{ fontSize: '0.85rem', color: 'var(--accent-gold)', textAlign: 'center' }}>{inv.invoiceId || `#${(inv._id || "********").substring(0, 8)}`}</td>
+                                <td data-label="CUSTOMER" style={{ fontWeight: '500', textAlign: 'center' }}>{inv.customerName}</td>
+                                <td data-label="MOBILE" style={{ textAlign: 'center' }}>{inv.mobileNumber || inv.mobile}</td>
+                                <td data-label="SERVICES"
                                     title={(inv.services || inv.items)?.filter(i => i && i.name).map(i => i.name).join(", ") || "No services"}
                                     style={{ maxWidth: '250px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'center' }}
                                 >
                                     {(inv.services || inv.items)?.filter(i => i && i.name).map(i => i.name).join(", ") || "No services"}
                                 </td>
-                                <td style={{ textAlign: 'center' }}>{inv.date || (inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('en-GB') : "N/A")}</td>
-                                <td style={{ fontWeight: '600', color: 'var(--accent-gold)', textAlign: 'center' }}>₹{inv.totalAmount ?? inv.total ?? 0}</td>
-                                <td className="actions-cell">
+                                <td data-label="DATE" style={{ textAlign: 'center' }}>{inv.date || (inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('en-GB') : "N/A")}</td>
+                                <td data-label="AMOUNT" style={{ fontWeight: '600', color: 'var(--accent-gold)', textAlign: 'center' }}>₹{inv.totalAmount ?? inv.total ?? 0}</td>
+                                <td data-label="ACTIONS" className="actions-cell">
                                     <div className="actions">
-                                        {/* Icons imported from Icons.jsx with explicit hex colors */}
-                                        <button
-                                            className="action-btn primary"
-                                            title="Download PDF"
-                                            onClick={() => downloadPDF(inv)}
-                                        >
+                                        <button className="action-btn primary" title="Download PDF" onClick={() => downloadPDF(inv)}>
                                             <IconPDF size={18} color="#60a5fa" />
                                         </button>
-                                        <button
-                                            className="action-btn success"
-                                            title="Send WhatsApp"
-                                            onClick={() => sendWhatsApp(inv)}
-                                        >
+                                        <button className="action-btn success" title="Send WhatsApp" onClick={() => sendWhatsApp(inv)}>
                                             <IconWhatsApp size={18} color="#4ade80" />
                                         </button>
-                                        <button
-                                            className="action-btn delete"
-                                            title="Delete Invoice"
-                                            onClick={() => triggerDeleteModal(inv)}
-                                        >
+                                        <button className="action-btn delete" title="Delete Invoice" onClick={() => triggerDeleteModal(inv)}>
                                             <IconTrash size={18} color="#fb7185" />
                                         </button>
                                     </div>

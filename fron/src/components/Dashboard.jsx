@@ -15,8 +15,10 @@ function Dashboard() {
   const [monthlyRevenue, setMonthlyRevenue] = useState(new Array(12).fill(0));
   const [topServices, setTopServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState("all");
 
   const setQuickFilter = (type) => {
+    setActiveFilter(type);
     const today = new Date();
     const formatDate = (date) => {
       const offset = date.getTimezoneOffset() * 60000;
@@ -115,11 +117,11 @@ function Dashboard() {
             </div>
           </div>
           <div className="quick-filters">
-            <button className={`q-btn ${startDate === "" ? 'active' : ''}`} onClick={() => setQuickFilter('all')}>ALL TIME</button>
-            <button className="q-btn" onClick={() => setQuickFilter('today')}>TODAY</button>
-            <button className="q-btn" onClick={() => setQuickFilter('yesterday')}>YESTERDAY</button>
-            <button className="q-btn" onClick={() => setQuickFilter('week')}>7 DAYS</button>
-            <button className="q-btn" onClick={() => setQuickFilter('month')}>THIS MONTH</button>
+            <button className={`q-btn ${activeFilter === 'all' ? 'active' : ''}`} onClick={() => setQuickFilter('all')}>ALL TIME</button>
+            <button className={`q-btn ${activeFilter === 'today' ? 'active' : ''}`} onClick={() => setQuickFilter('today')}>TODAY</button>
+            <button className={`q-btn ${activeFilter === 'yesterday' ? 'active' : ''}`} onClick={() => setQuickFilter('yesterday')}>YESTERDAY</button>
+            <button className={`q-btn ${activeFilter === 'week' ? 'active' : ''}`} onClick={() => setQuickFilter('week')}>7 DAYS</button>
+            <button className={`q-btn ${activeFilter === 'month' ? 'active' : ''}`} onClick={() => setQuickFilter('month')}>THIS MONTH</button>
           </div>
         </div>
       </div>

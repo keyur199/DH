@@ -47,4 +47,21 @@ export const IconFileText = (props) => <IconPDF {...props} />;
 export const IconUsers = (props) => <IconEdit {...props} />;
 export const IconClipboard = (props) => <IconEdit {...props} />;
 export const IconCheck = (props) => <IconWhatsApp {...props} />;
-export const IconX = (props) => <IconTrash {...props} />;
+export function IconX({ size = 18, color = "#fb7185" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: color, display: 'block', overflow: 'visible' }}>
+      <path d="M18 6L6 18" />
+      <path d="M6 6l12 12" />
+    </svg>
+  );
+}
+
+export function IconMenu({ size = 20, color = "white" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: color, display: 'block', overflow: 'visible' }}>
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="3" y1="18" x2="21" y2="18" />
+    </svg>
+  );
+}
