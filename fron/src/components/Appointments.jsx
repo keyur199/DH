@@ -106,7 +106,7 @@ function Appointments({
         setServiceList([{ name: "", price: "" }]);
       }
     } catch (error) {
-      alert("Failed to book appointment: " + (error.message || "Unknown error"));
+      showAlert("Booking Failed", "Failed to book appointment: " + (error.message || "Unknown error"));
     }
   };
 
@@ -138,19 +138,19 @@ function Appointments({
   /* REVERT TO PENDING (Deletes Invoice) */
   const revertToPending = async (id) => {
     showConfirm(
-      "Revert Appointment?", 
+      "Revert Appointment?",
       "Are you sure you want to revert this to Pending? The associated invoice will be deleted automatically.",
       async () => {
-          try {
-            const res = await apiRequest(`/revertToPending/${id}`, "PUT");
-            if (res.success) {
-              setAppointments(appointments.map(a => a._id === id ? res.result : a));
-              // Also update invoices list if needed (it will be missing now)
-              setInvoices(prev => prev.filter(inv => inv.appointmentId !== id));
-            }
-          } catch (err) {
-            console.error("Revert error:", err);
+        try {
+          const res = await apiRequest(`/revertToPending/${id}`, "PUT");
+          if (res.success) {
+            setAppointments(appointments.map(a => a._id === id ? res.result : a));
+            // Also update invoices list if needed (it will be missing now)
+            setInvoices(prev => prev.filter(inv => inv.appointmentId !== id));
           }
+        } catch (err) {
+          showAlert("Revert Failed", "Failed to revert appointment: " + err.message);
+        }
       }
     );
   };
@@ -177,35 +177,39 @@ function Appointments({
   const [searchDate, setSearchDate] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
   const [confirmModal, setConfirmModal] = useState({
-      show: false,
-      title: "",
-      message: "",
-      onConfirm: null,
-      type: 'confirm' // 'confirm' or 'alert'
+    show: false,
+    title: "",
+    message: "",
+    onConfirm: null,
+    type: 'confirm' // 'confirm' or 'alert'
   });
 
   const showAlert = (title, message) => {
-      setConfirmModal({
-          show: true,
-          title,
-          message,
-          onConfirm: () => setConfirmModal(prev => ({ ...prev, show: false })),
-          type: 'alert'
-      });
+    setConfirmModal({
+      show: true,
+      title,
+      message,
+      onConfirm: () => setConfirmModal(prev => ({ ...prev, show: false })),
+      type: 'alert'
+    });
   };
 
   const showConfirm = (title, message, onConfirm) => {
-      setConfirmModal({
-          show: true,
-          title,
-          message,
-          onConfirm: () => {
-              onConfirm();
-              setConfirmModal(prev => ({ ...prev, show: false }));
-          },
-          type: 'confirm'
-      });
+    setConfirmModal({
+      show: true,
+      title,
+      message,
+      onConfirm: () => {
+        onConfirm();
+        setConfirmModal(prev => ({ ...prev, show: false }));
+      },
+      type: 'confirm'
+    });
   };
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -321,19 +325,19 @@ function Appointments({
       <div className="table-card appointments-card glass-card mt-25" style={{ padding: '20px' }}>
         <div className="table-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
           <h3 className="title-small" style={{ margin: 0 }}><span className="icon-gold">📋</span> Latest Appointments</h3>
-          
+
           <div className="table-filters" style={{ display: 'flex', gap: '12px' }}>
             <div className="filter-item">
-              <input 
-                type="text" 
-                placeholder="Search by Name/Mobile..." 
-                value={searchTerm} 
+              <input
+                type="text"
+                placeholder="Search by Name/Mobile..."
+                value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                style={{ 
-                  background: 'rgba(255,255,255,0.05)', 
-                  border: '1px solid rgba(255,255,255,0.1)', 
-                  color: 'white', 
-                  padding: '8px 12px', 
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: 'white',
+                  padding: '8px 12px',
                   borderRadius: '8px',
                   fontSize: '0.85rem',
                   width: '200px'
@@ -342,21 +346,21 @@ function Appointments({
             </div>
             <div className="filter-item" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--accent-gold)', fontWeight: '600' }}>DATE:</span>
-              <input 
-                type="date" 
-                value={searchDate} 
+              <input
+                type="date"
+                value={searchDate}
                 onChange={(e) => setSearchDate(e.target.value)}
-                style={{ 
-                  background: 'rgba(255,255,255,0.05)', 
-                  border: '1px solid rgba(255,255,255,0.1)', 
-                  color: 'white', 
-                  padding: '6px 10px', 
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: 'white',
+                  padding: '6px 10px',
                   borderRadius: '8px',
                   fontSize: '0.85rem'
                 }}
               />
               {searchDate && (
-                <button 
+                <button
                   onClick={() => setSearchDate("")}
                   style={{ background: 'transparent', border: 'none', color: '#fb7185', cursor: 'pointer', fontSize: '0.8rem' }}
                 >✕</button>
@@ -379,33 +383,36 @@ function Appointments({
               </tr>
             </thead>
             <tbody>
-              {appointments
-                .filter(a => {
+              {(() => {
+                const filtered = appointments.filter(a => {
                   const matchesDate = searchDate ? a.date === searchDate : true;
                   const matchesSearch = searchTerm ? (
                     (a.customerName?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
                     String(a.mobileNumber || "").includes(searchTerm)
                   ) : true;
                   return matchesDate && matchesSearch;
-                })
-                .length === 0 ? (
-                <tr><td colSpan="8" style={{ textAlign: 'center', padding: '40px', opacity: 0.5 }}>No matching appointments found.</td></tr>
-              ) : (
-                appointments
-                  .filter(a => {
-                    const matchesDate = searchDate ? a.date === searchDate : true;
-                    const matchesSearch = searchTerm ? (
-                      (a.customerName?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-                      String(a.mobileNumber || "").includes(searchTerm)
-                    ) : true;
-                    return matchesDate && matchesSearch;
-                  })
-                  .map((a, idx) => (
+                });
+
+                const totalItems = filtered.length;
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+                const currentItems = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+                if (currentItems.length === 0) {
+                  return (
+                    <tr>
+                      <td colSpan="8" style={{ textAlign: 'center', padding: '40px', opacity: 0.5 }}>
+                        No matching appointments found.
+                      </td>
+                    </tr>
+                  );
+                }
+
+                return currentItems.map((a, idx) => (
                   <tr key={a._id} className="premium-row">
-                    <td data-label="#" style={{ opacity: '0.6', textAlign: 'center' }}>{idx + 1}</td>
-                    <td data-label="CUSTOMER" style={{ fontWeight: '600', color: 'var(--accent-gold)', textAlign: 'center' }}>{a.customerName}</td>
-                    <td data-label="MOBILE" style={{ letterSpacing: '0.5px', fontSize: '0.9rem', textAlign: 'center' }}>{a.mobileNumber}</td>
-                    <td data-label="SERVICES"
+                    <td style={{ opacity: '0.6', textAlign: 'center' }}>{(currentPage - 1) * itemsPerPage + idx + 1}</td>
+                    <td style={{ fontWeight: '600', color: 'var(--accent-gold)', textAlign: 'center' }}>{a.customerName}</td>
+                    <td style={{ letterSpacing: '0.5px', fontSize: '0.9rem', textAlign: 'center' }}>{a.mobileNumber}</td>
+                    <td
                       title={a.services?.map(s => s.name).join(", ")}
                       style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'center' }}
                     >
@@ -451,11 +458,49 @@ function Appointments({
                       </button>
                     </td>
                   </tr>
-                ))
-              )}
+                ));
+              })()}
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Controls */}
+        {(() => {
+          const filtered = appointments.filter(a => {
+            const matchesDate = searchDate ? a.date === searchDate : true;
+            const matchesSearch = searchTerm ? (
+              (a.customerName?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+              String(a.mobileNumber || "").includes(searchTerm)
+            ) : true;
+            return matchesDate && matchesSearch;
+          });
+          const totalPages = Math.ceil(filtered.length / itemsPerPage);
+
+          if (totalPages > 1) {
+            return (
+              <div className="pagination-wrapper" style={{ marginTop: '20px' }}>
+                <button
+                  className="page-btn"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(prev => prev - 1)}
+                >
+                  Previous
+                </button>
+                <div className="page-info">
+                  Page {currentPage} of {totalPages}
+                </div>
+                <button
+                  className="page-btn"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(prev => prev + 1)}
+                >
+                  Next
+                </button>
+              </div>
+            );
+          }
+          return null;
+        })()}
       </div>
 
       {/* DELETE CONFIRMATION MODAL */}
@@ -503,10 +548,10 @@ function Appointments({
             </div>
 
             {/* SERVICES SECTION FOR EDIT MODAL */}
-            <div className="services-section-modal" style={{ 
-              marginTop: '25px', 
-              padding: '20px', 
-              background: 'rgba(255,255,255,0.02)', 
+            <div className="services-section-modal" style={{
+              marginTop: '25px',
+              padding: '20px',
+              background: 'rgba(255,255,255,0.02)',
               borderRadius: '16px',
               border: '1px solid rgba(255,255,255,0.05)'
             }}>
@@ -536,9 +581,9 @@ function Appointments({
                 </button>
               </div>
 
-              <div className="services-scroll-area" style={{ 
-                maxHeight: '220px', 
-                overflowY: 'auto', 
+              <div className="services-scroll-area" style={{
+                maxHeight: '220px',
+                overflowY: 'auto',
                 paddingRight: '6px',
                 paddingBottom: '80px' // Extra space for dropdown to open without clipping
               }}>
@@ -633,31 +678,31 @@ function Appointments({
       )}
       {/* GENERIC CONFIRMATION / ALERT MODAL */}
       {confirmModal.show && (
-          <div className="modal-overlay" style={{ zIndex: 300000 }}>
-              <div className="confirm-modal animate-in" style={{ maxWidth: '400px' }}>
-                  <h3 style={{ color: 'var(--accent-gold)', marginBottom: '15px' }}>{confirmModal.title}</h3>
-                  <p style={{ color: 'white', opacity: 0.8, marginBottom: '25px', lineHeight: '1.5' }}>{confirmModal.message}</p>
-                  
-                  <div style={{ display: 'flex', gap: '12px' }}>
-                      {confirmModal.type === 'confirm' && (
-                          <button 
-                              className="cancel-btn" 
-                              style={{ flex: 1, padding: '12px' }}
-                              onClick={() => setConfirmModal(prev => ({ ...prev, show: false }))}
-                          >
-                              Cancel
-                          </button>
-                      )}
-                      <button 
-                          className="book-btn" 
-                          style={{ flex: 1, margin: 0, padding: '12px', background: 'var(--accent-gold)', color: 'black' }}
-                          onClick={confirmModal.onConfirm}
-                      >
-                          {confirmModal.type === 'confirm' ? 'Confirm' : 'OK'}
-                      </button>
-                  </div>
-              </div>
+        <div className="modal-overlay" style={{ zIndex: 300000 }}>
+          <div className="confirm-modal animate-in" style={{ maxWidth: '400px' }}>
+            <h3 style={{ color: 'var(--accent-gold)', marginBottom: '15px' }}>{confirmModal.title}</h3>
+            <p style={{ color: 'white', opacity: 0.8, marginBottom: '25px', lineHeight: '1.5' }}>{confirmModal.message}</p>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              {confirmModal.type === 'confirm' && (
+                <button
+                  className="cancel-btn"
+                  style={{ flex: 1, padding: '12px' }}
+                  onClick={() => setConfirmModal(prev => ({ ...prev, show: false }))}
+                >
+                  Cancel
+                </button>
+              )}
+              <button
+                className="book-btn"
+                style={{ flex: 1, margin: 0, padding: '12px', background: 'var(--accent-gold)', color: 'black' }}
+                onClick={confirmModal.onConfirm}
+              >
+                {confirmModal.type === 'confirm' ? 'Confirm' : 'OK'}
+              </button>
+            </div>
           </div>
+        </div>
       )}
     </div>
   );

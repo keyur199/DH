@@ -12,7 +12,12 @@ function Dashboard() {
     totalInvoices: 0,
     totalCustomers: 0
   });
-  const [monthlyRevenue, setMonthlyRevenue] = useState(new Array(12).fill(0));
+  const [growthData, setGrowthData] = useState({
+    data: new Array(12).fill(0),
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    type: 'monthly',
+    year: new Date().getFullYear()
+  });
   const [topServices, setTopServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("all");
@@ -57,9 +62,8 @@ function Dashboard() {
   const fetchInitialData = async () => {
     try {
       setLoading(true);
-      // Fetch static growth chart once
-      const growthRes = await apiRequest("/getRevenueGrowth");
-      if (growthRes.success) setMonthlyRevenue(growthRes.result);
+      // Initial stats fetch will handle growth too
+      await fetchDynamicStats();
       
       // Fetch initial stats
       await fetchDynamicStats();
@@ -74,15 +78,17 @@ function Dashboard() {
     try {
       const query = `?startDate=${startDate || ""}&endDate=${endDate || ""}`;
       
-      const [statsRes, topRes] = await Promise.all([
+      const [statsRes, topRes, growthRes] = await Promise.all([
         apiRequest(`/getDashboardStats${query}`),
-        apiRequest(`/getTopServices${query}`)
+        apiRequest(`/getTopServices${query}`),
+        apiRequest(`/getRevenueGrowth${query}`)
       ]);
 
       if (statsRes.success) setStats(statsRes.result);
       if (topRes.success) {
         setTopServices(topRes.result.length > 0 ? topRes.result : [{ name: "No data in range", val: 0 }]);
       }
+      if (growthRes.success) setGrowthData(growthRes.result);
     } catch (err) {
       console.error("Filtering failed:", err);
     }
@@ -94,7 +100,7 @@ function Dashboard() {
   }, [startDate, endDate]);
 
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const maxMonthly = Math.max(...monthlyRevenue, 1);
+  const maxMonthly = Math.max(...growthData.data, 1);
 
   if (loading) {
     return <div style={{ padding: '2rem', textAlign: 'center', color: '#fff' }}>Refreshing Dashboard...</div>;
@@ -152,19 +158,21 @@ function Dashboard() {
 
 
       <div className="dashboard-charts">
-        <div className="chart-card revenue-chart glass-effect">
-          <div className="chart-header">
-            <h3>Revenue Growth ({new Date().getFullYear()})</h3>
+        <div className="chart-card revenue-chart glass-effect" style={{ width: '100%' }}>
+          <div className="chart-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3>Revenue Growth {growthData.type === 'daily' ? '(Daily View)' : `(${growthData.year})`}</h3>
+            {growthData.type === 'daily' && <span style={{ fontSize: '0.8rem', color: 'var(--accent-gold)' }}>Showing {growthData.labels.length} Days</span>}
           </div>
-          <div className="bar-container">
-            {months.map((month, i) => {
-              const h = (monthlyRevenue[i] / maxMonthly) * 85 + 5;
+          <div className="bar-container" style={{ minHeight: '220px', overflowX: growthData.type === 'daily' ? 'auto' : 'hidden', paddingBottom: '10px' }}>
+            {growthData.labels.map((label, i) => {
+              const val = growthData.data[i];
+              const h = (val / maxMonthly) * 100;
               return (
-                <div key={i} className="bar-wrapper">
-                  <div className="bar" style={{ height: `${h}%` }}>
-                    <span className="bar-value">₹{monthlyRevenue[i]}</span>
+                <div key={i} className="bar-wrapper" style={{ minWidth: growthData.type === 'daily' ? '40px' : 'auto' }}>
+                  <div className="bar" style={{ height: `${h}%`, opacity: val > 0 ? 1 : 0.1 }}>
+                    <span className="bar-value">₹{val.toLocaleString()}</span>
                   </div>
-                  <span className="bar-label">{month}</span>
+                  <span className="bar-label" style={{ fontSize: growthData.type === 'daily' ? '0.7rem' : '0.85rem' }}>{label}</span>
                 </div>
               );
             })}

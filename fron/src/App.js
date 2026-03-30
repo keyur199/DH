@@ -15,8 +15,8 @@ function App() {
     const isAuth = sessionStorage.getItem("isAuth") === "true";
     const token = sessionStorage.getItem("token");
     if (isAuth && !token) {
-        sessionStorage.clear();
-        return false;
+      sessionStorage.clear();
+      return false;
     }
     return isAuth;
   });
@@ -100,12 +100,12 @@ function App() {
 
     <div className={`app ${theme}`}>
 
-      <Navbar 
-        setPage={setPage} 
-        page={page} 
-        theme={theme} 
-        setTheme={setTheme} 
-        setIsAuthenticated={setIsAuthenticated} 
+      <Navbar
+        setPage={setPage}
+        page={page}
+        theme={theme}
+        setTheme={setTheme}
+        setIsAuthenticated={setIsAuthenticated}
         userName={userName}
       />
 

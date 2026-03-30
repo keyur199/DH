@@ -13,6 +13,24 @@ function Billing({ setInvoices, setCustomers, services, setServices }) {
     { name: "", qty: 1, price: 0 }
   ]);
 
+  const [confirmModal, setConfirmModal] = useState({
+      show: false,
+      title: "",
+      message: "",
+      onConfirm: null,
+      type: 'alert'
+  });
+
+  const showAlert = (title, message) => {
+      setConfirmModal({
+          show: true,
+          title,
+          message,
+          onConfirm: () => setConfirmModal(prev => ({ ...prev, show: false })),
+          type: 'alert'
+      });
+  };
+
   const addItem = () => {
     setItems([...items, { name: "", qty: 1, price: 0 }]);
   };
@@ -32,7 +50,7 @@ function Billing({ setInvoices, setCustomers, services, setServices }) {
 
   const createInvoice = async () => {
     if (!customer || !mobile) {
-      alert("Enter customer details");
+      showAlert("Missing Details", "Please provide customer name and mobile number to generate invoice.");
       return;
     }
 
@@ -64,7 +82,7 @@ function Billing({ setInvoices, setCustomers, services, setServices }) {
         setItems([{ name: "", qty: 1, price: 0 }]);
       }
     } catch (error) {
-      alert("Failed to save invoice: " + error.message);
+      showAlert("Operation Failed", "Failed to save invoice: " + error.message);
     }
   };
 
@@ -150,6 +168,26 @@ function Billing({ setInvoices, setCustomers, services, setServices }) {
           <button className="generate-btn" onClick={createInvoice}>Generate Invoice</button>
         </div>
       </div>
+
+      {/* GENERIC CONFIRMATION / ALERT MODAL */}
+      {confirmModal.show && (
+          <div className="modal-overlay" style={{ zIndex: 300000 }}>
+              <div className="confirm-modal animate-in" style={{ maxWidth: '400px' }}>
+                  <h3 style={{ color: 'var(--accent-gold)', marginBottom: '15px' }}>{confirmModal.title}</h3>
+                  <p style={{ color: 'white', opacity: 0.8, marginBottom: '25px', lineHeight: '1.5' }}>{confirmModal.message}</p>
+                  
+                  <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                      <button 
+                          className="add-btn" 
+                          style={{ flex: 1, margin: 0, padding: '12px', background: 'var(--accent-gold)', color: 'black', border: 'none', fontWeight: 'bold' }}
+                          onClick={confirmModal.onConfirm}
+                      >
+                          OK
+                      </button>
+                  </div>
+              </div>
+          </div>
+      )}
     </div>
   );
 }
