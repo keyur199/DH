@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 });
 
 // Database connection & Server start
-mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/DH')
+mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://keyurd846_db_user:Keyur%401905@dh.po1nnaw.mongodb.net/DH')
   .then(() => {
     console.log('Connected to MongoDB');
     app.listen(port, () => {
