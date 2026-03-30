@@ -56,32 +56,100 @@ export const getDashboardStats = async (req, res) => {
  */
 export const getRevenueGrowth = async (req, res) => {
     try {
-        const year = new Date().getFullYear().toString();
+        const { startDate, endDate } = req.query;
 
-        const growth = await Invoice.aggregate([
-            {
-                $match: {
-                    date: { $regex: `^${year}-` }
-                }
-            },
-            {
-                $group: {
-                    _id: { $month: { $dateFromString: { dateString: "$date" } } },
-                    revenue: { $sum: "$totalAmount" }
-                }
-            },
-            { $sort: { "_id": 1 } }
-        ]);
+        // CHECK IF DAILY OR MONTHLY (based on range)
+        let isDaily = false;
+        let dayDiff = 0;
+        if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            dayDiff = Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24));
+            if (dayDiff <= 45) isDaily = true; // Use daily if <= 45 days
+        }
 
-        // Initialize 12 months with 0
-        const monthlyData = new Array(12).fill(0);
-        growth.forEach(item => {
-            if (item._id >= 1 && item._id <= 12) {
-                monthlyData[item._id - 1] = item.revenue;
+        if (isDaily) {
+            // DAILY AGGREGATION
+            const growth = await Invoice.aggregate([
+                { $match: { date: { $gte: startDate, $lte: endDate } } },
+                {
+                    $group: {
+                        _id: "$date",
+                        revenue: { $sum: "$totalAmount" }
+                    }
+                },
+                { $sort: { "_id": 1 } }
+            ]);
+
+            // Fill all dates in range with 0 if missing
+            const resultData = [];
+            const labels = [];
+            let curr = new Date(startDate);
+            const end = new Date(endDate);
+
+            while (curr <= end) {
+                const dateStr = curr.toISOString().split('T')[0];
+                const found = growth.find(g => g._id === dateStr);
+
+                // Friendly label (DD/MM)
+                const d = curr.getDate();
+                const m = curr.getMonth() + 1;
+                labels.push(`${d}/${m}`);
+                resultData.push(found ? found.revenue : 0);
+
+                curr.setDate(curr.getDate() + 1);
             }
-        });
 
-        return sendSuccessResponse(res, "Revenue growth data fetched successfully", monthlyData);
+            return sendSuccessResponse(res, "Daily growth data fetched", { data: resultData, labels, type: 'daily' });
+
+        } else {
+            // MONTHLY AGGREGATION (Default/Long Range)
+            let year = new Date().getFullYear().toString();
+            // Same year logic as before...
+            if (startDate) {
+                year = startDate.split(/[-/]/)[0];
+                if (year.length !== 4) year = startDate.split(/[-/]/)[2];
+            }
+
+            const growth = await Invoice.aggregate([
+                {
+                    $match: {
+                        $or: [
+                            { date: { $regex: `^${year}-` } },
+                            { date: { $regex: `-${year}$` } }
+                        ]
+                    }
+                },
+                {
+                    $addFields: {
+                        monthValue: {
+                            $cond: {
+                                if: { $regexMatch: { input: "$date", regex: "^\\d{4}-" } },
+                                then: { $toInt: { $substr: ["$date", 5, 2] } },
+                                else: { $toInt: { $substr: ["$date", 3, 2] } }
+                            }
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: "$monthValue",
+                        revenue: { $sum: "$totalAmount" }
+                    }
+                },
+                { $sort: { "_id": 1 } }
+            ]);
+
+            const monthlyData = new Array(12).fill(0);
+            growth.forEach(item => {
+                if (item._id >= 1 && item._id <= 12) {
+                    monthlyData[item._id - 1] = item.revenue;
+                }
+            });
+
+            const monthsLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            return sendSuccessResponse(res, "Monthly growth data fetched", { data: monthlyData, labels: monthsLabels, type: 'monthly', year });
+        }
     } catch (error) {
         return ThrowError(res, 500, error.message);
     }

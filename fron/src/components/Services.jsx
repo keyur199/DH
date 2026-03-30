@@ -13,15 +13,33 @@ function Services({ services, setServices }) {
   // Delete Modal State
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [serviceToDelete, setServiceToDelete] = useState(null);
-
-  // Pagination State
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+ 
+   // Pagination State
+   const [currentPage, setCurrentPage] = useState(1);
+   const itemsPerPage = 10;
+ 
+   const [confirmModal, setConfirmModal] = useState({
+       show: false,
+       title: "",
+       message: "",
+       onConfirm: null,
+       type: 'alert'
+   });
+ 
+   const showAlert = (title, message) => {
+       setConfirmModal({
+           show: true,
+           title,
+           message,
+           onConfirm: () => setConfirmModal(prev => ({ ...prev, show: false })),
+           type: 'alert'
+       });
+   };
 
   /* ADD SERVICE */
   const addService = async () => {
     if (!newName || !newPrice) {
-      alert("Please enter both name and price");
+      showAlert("Missing Details", "Please enter both service name and default price.");
       return;
     }
 
@@ -38,7 +56,7 @@ function Services({ services, setServices }) {
         setCurrentPage(1); // Go to first page to see new item
       }
     } catch (error) {
-      alert("Failed to add service: " + error.message);
+      showAlert("Operation Failed", "Failed to add service: " + error.message);
     }
   };
 
@@ -59,7 +77,7 @@ function Services({ services, setServices }) {
         setServiceToDelete(null);
       }
     } catch (error) {
-      alert("Failed to delete service: " + error.message);
+      showAlert("Delete Failed", "Failed to delete service: " + error.message);
     }
   };
 
@@ -82,7 +100,7 @@ function Services({ services, setServices }) {
         setEditingId(null);
       }
     } catch (error) {
-      alert("Failed to update service: " + error.message);
+      showAlert("Update Failed", "Failed to update service: " + error.message);
     }
   };
 
@@ -214,7 +232,27 @@ function Services({ services, setServices }) {
           </div>
         </div>
       )}
-    </div>
+ 
+       {/* GENERIC CONFIRMATION / ALERT MODAL */}
+       {confirmModal.show && (
+           <div className="modal-overlay" style={{ zIndex: 300000 }}>
+               <div className="confirm-modal animate-in" style={{ maxWidth: '400px' }}>
+                   <h3 style={{ color: 'var(--accent-gold)', marginBottom: '15px' }}>{confirmModal.title}</h3>
+                   <p style={{ color: 'white', opacity: 0.8, marginBottom: '25px', lineHeight: '1.5' }}>{confirmModal.message}</p>
+                   
+                   <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                       <button 
+                           className="add-btn" 
+                           style={{ flex: 1, margin: 0, padding: '12px', background: 'var(--accent-gold)', color: 'black', border: 'none', fontWeight: 'bold' }}
+                           onClick={confirmModal.onConfirm}
+                       >
+                           OK
+                       </button>
+                   </div>
+               </div>
+           </div>
+       )}
+     </div>
   );
 }
 
