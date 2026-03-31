@@ -116,12 +116,13 @@ function Billing({ setInvoices, setCustomers, services, setServices }) {
         </div>
 
         <div className="services-box">
-          <div className="service-header">
-            <div>Service</div>
-            <div>Qty</div>
-            <div>Price</div>
-            <div>Action</div>
+          <div className="service-header-row">
+            <span className="col-srv">Service</span>
+            <span className="col-qty">Qty</span>
+            <span className="col-prc">Price</span>
+            <span className="col-act">Action</span>
           </div>
+
 
           {items.map((item, i) => (
             <div key={i} className="service-row">
@@ -144,6 +145,7 @@ function Billing({ setInvoices, setCustomers, services, setServices }) {
 
               <input
                 type="number"
+                className="qty-input"
                 placeholder="Qty"
                 value={item.qty === 0 ? "" : item.qty}
                 onChange={(e) => updateItem(i, "qty", e.target.value === "" ? 0 : Number(e.target.value))}
@@ -151,16 +153,25 @@ function Billing({ setInvoices, setCustomers, services, setServices }) {
 
               <input
                 type="number"
+                className="price-input"
                 placeholder="Price"
                 value={item.price === 0 ? "" : item.price}
                 onChange={(e) => updateItem(i, "price", e.target.value === "" ? 0 : Number(e.target.value))}
               />
 
-              <button className="delete-btn" onClick={() => deleteItem(i)}>Delete</button>
+              <button className="delete-btn-premium" onClick={() => deleteItem(i)} title="Remove Item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+              </button>
+
             </div>
+
           ))}
 
-          <button className="add-service-btn" onClick={addItem}>Add Service</button>
+          <button className="add-service-btn-premium" onClick={addItem}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Service
+          </button>
+
         </div>
 
         <div className="invoice-footer">

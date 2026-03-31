@@ -5,7 +5,7 @@ function Customers() {
     const [search, setSearch] = useState("");
     const [customerList, setCustomerList] = useState([]);
     const [loading, setLoading] = useState(true);
-    
+
     // Pagination State
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
@@ -49,16 +49,20 @@ function Customers() {
 
     return (
         <div className="customers-page animate-in">
-            <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h2 style={{ margin: 0 }}>Customers <span className="badge-count">{totalItems}</span></h2>
-                <input
-                    className="search-box"
-                    style={{ margin: 0, width: '300px' }}
-                    placeholder="Search name or mobile..."
-                    value={search}
-                    onChange={handleSearchChange}
-                />
+            <div className="page-header customer-header-mobile">
+                <div className="header-left-side">
+                    <h2 className="page-title">Customers</h2>
+                </div>
+                <div className="header-search-side">
+                    <input
+                        className="search-box boutique-search"
+                        placeholder="Search name or mobile..."
+                        value={search}
+                        onChange={handleSearchChange}
+                    />
+                </div>
             </div>
+
 
             <div className="table-card customers-card" style={{ overflowX: 'auto' }}>
                 {loading ? (
@@ -94,12 +98,12 @@ function Customers() {
                                 )}
                             </tbody>
                         </table>
-                        
+
                         {/* Pagination Controls */}
                         {totalPages > 1 && (
                             <div className="pagination-wrapper">
-                                <button 
-                                    className="page-btn" 
+                                <button
+                                    className="page-btn"
                                     disabled={currentPage === 1}
                                     onClick={() => setCurrentPage(prev => prev - 1)}
                                 >
@@ -108,8 +112,8 @@ function Customers() {
                                 <div className="page-info">
                                     Page {currentPage} of {totalPages}
                                 </div>
-                                <button 
-                                    className="page-btn" 
+                                <button
+                                    className="page-btn"
                                     disabled={currentPage === totalPages}
                                     onClick={() => setCurrentPage(prev => prev + 1)}
                                 >

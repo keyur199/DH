@@ -134,25 +134,38 @@ function Dashboard() {
 
       <div className="cards">
         <div className="card revenue shadow-gold">
-          <div className="card-icon"><IconTrendingUp size={32} color="#d4af37" /></div>
-          <h3>Revenue</h3>
-          <p>₹ {stats.totalRevenue.toLocaleString()}</p>
+          <div className="card-glow gold"></div>
+          <div className="card-icon"><IconTrendingUp size={34} color="#d4af37" /></div>
+          <div className="card-title-row">
+            <h3>Revenue</h3>
+            <span className="boutique-badge gold">{stats.totalRevenue.toLocaleString()}</span>
+          </div>
           <span className="card-trend">{startDate || endDate ? "Filtered" : "All Time"} Income</span>
+
         </div>
 
         <div className="card invoices shadow-rose">
-          <div className="card-icon"><IconFileText size={32} color="#d68b98" /></div>
-          <h3>Invoices</h3>
-          <p>{String(stats.totalInvoices).padStart(2, "0")}</p>
+          <div className="card-glow rose"></div>
+          <div className="card-icon"><IconFileText size={34} color="#d68b98" /></div>
+          <div className="card-title-row">
+            <h3>Invoices</h3>
+            <span className="boutique-badge rose">{String(stats.totalInvoices).padStart(2, "0")}</span>
+          </div>
           <span className="card-trend">{stats.totalInvoices} Orders</span>
+
         </div>
 
         <div className="card customers shadow-blue">
-          <div className="card-icon"><IconUsers size={32} color="#60a5fa" /></div>
-          <h3>Customers</h3>
-          <p>{String(stats.totalCustomers).padStart(2, "0")}</p>
+          <div className="card-glow blue"></div>
+          <div className="card-icon"><IconUsers size={34} color="#60a5fa" /></div>
+          <div className="card-title-row">
+            <h3>Customers</h3>
+            <span className="boutique-badge blue">{String(stats.totalCustomers).padStart(2, "0")}</span>
+          </div>
           <span className="card-trend">Unique Clients</span>
+
         </div>
+
       </div>
 
 

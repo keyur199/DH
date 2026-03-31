@@ -263,7 +263,11 @@ function Appointments({
   return (
     <div className="appointments-page">
       <div className="booking-card">
-        <h2>Appointment Booking</h2>
+        <h2 className="title-medium" style={{ display: 'flex', alignItems: 'center' }}>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '12px' }}><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Appointment Booking
+        </h2>
+
         <div className="form-grid">
           <input
             placeholder="Customer Name"
@@ -288,8 +292,14 @@ function Appointments({
         </div>
 
         <div className="services-section">
-          <h4>Services</h4>
+          <h4>Services Selection</h4>
+          <div className="service-header-row">
+            <span className="col-srv">Service</span>
+            <span className="col-prc">Price</span>
+            <span className="col-act">Action</span>
+          </div>
           {serviceList.map((s, i) => (
+
             <div key={i} className="service-row">
               <div className="input-group">
                 <CustomDropdown
@@ -309,14 +319,23 @@ function Appointments({
               </div>
               <input
                 type="number"
+                className="price-input"
                 placeholder="Price"
                 value={s.price}
                 onChange={(e) => updateServiceRow(i, "price", e.target.value)}
               />
-              <button className="remove-btn" onClick={() => removeServiceRow(i)}>Remove</button>
+
+              <button className="delete-btn-premium" onClick={() => removeServiceRow(i)} title="Remove Service">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+              </button>
+
             </div>
           ))}
-          <button className="add-btn" onClick={addServiceRow}>Add Service</button>
+          <button className="add-service-btn-premium" onClick={addServiceRow}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Service
+          </button>
+
         </div>
 
         <button className="book-btn" onClick={bookAppointment}>Book Appointment</button>
@@ -324,7 +343,11 @@ function Appointments({
 
       <div className="table-card appointments-card glass-card mt-25" style={{ padding: '20px' }}>
         <div className="table-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-          <h3 className="title-small" style={{ margin: 0 }}><span className="icon-gold">📋</span> Latest Appointments</h3>
+          <h3 className="title-small" style={{ display: 'flex', alignItems: 'center', margin: 0 }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px' }}><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+            Latest Appointments
+          </h3>
+
 
           <div className="table-filters" style={{ display: 'flex', gap: '12px' }}>
             <div className="filter-item">
@@ -368,19 +391,21 @@ function Appointments({
             </div>
           </div>
         </div>
-        <div className="table-wrapper">
-          <table className="premium-table" style={{ tableLayout: 'fixed', width: '100%' }}>
+        <div className="table-container">
+          <table className="premium-table">
+
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <th style={{ width: '5%' }}>#</th>
-                <th style={{ width: '15%' }}>CUSTOMER</th>
-                <th style={{ width: '12%' }}>MOBILE</th>
-                <th style={{ width: '22%' }}>SERVICES</th>
-                <th style={{ width: '11%' }}>DATE</th>
-                <th style={{ width: '10%' }}>TIME</th>
-                <th style={{ width: '12%' }} className="centered-cell">STATUS</th>
-                <th style={{ width: '13%' }} className="centered-cell">ACTIONS</th>
+                <th className="col-idx">#</th>
+                <th className="col-cust">CUSTOMER</th>
+                <th className="col-mobi">MOBILE</th>
+                <th className="col-serv">SERVICES</th>
+                <th className="col-date">DATE</th>
+                <th className="col-time">TIME</th>
+                <th className="col-stat centered-cell">STATUS</th>
+                <th className="col-acts centered-cell">ACTIONS</th>
               </tr>
+
             </thead>
             <tbody>
               {(() => {
@@ -409,17 +434,17 @@ function Appointments({
 
                 return currentItems.map((a, idx) => (
                   <tr key={a._id} className="premium-row">
-                    <td style={{ opacity: '0.6', textAlign: 'center' }}>{(currentPage - 1) * itemsPerPage + idx + 1}</td>
-                    <td style={{ fontWeight: '600', color: 'var(--accent-gold)', textAlign: 'center' }}>{a.customerName}</td>
-                    <td style={{ letterSpacing: '0.5px', fontSize: '0.9rem', textAlign: 'center' }}>{a.mobileNumber}</td>
-                    <td
+                    <td data-label="#" style={{ opacity: '0.6', textAlign: 'center' }}><span>{(currentPage - 1) * itemsPerPage + idx + 1}</span></td>
+                    <td data-label="CUSTOMER" style={{ fontWeight: '600', color: 'var(--accent-gold)', textAlign: 'center' }}><span>{a.customerName}</span></td>
+                    <td data-label="MOBILE" style={{ letterSpacing: '0.5px', fontSize: '0.9rem', textAlign: 'center' }}><span>{a.mobileNumber}</span></td>
+                    <td data-label="SERVICES"
                       title={a.services?.map(s => s.name).join(", ")}
                       style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'center' }}
                     >
-                      {a.services?.map(s => s.name).join(", ")}
+                      <span>{a.services?.map(s => s.name).join(", ")}</span>
                     </td>
-                    <td data-label="DATE" style={{ whiteSpace: "nowrap", fontSize: '0.85rem', textAlign: 'center' }}>{a.date}</td>
-                    <td data-label="TIME" style={{ whiteSpace: "nowrap", fontSize: '0.85rem' }}>{formatTime(a.time)}</td>
+                    <td data-label="DATE" style={{ whiteSpace: "nowrap", fontSize: '0.85rem', textAlign: 'center' }}><span>{a.date}</span></td>
+                    <td data-label="TIME" style={{ whiteSpace: "nowrap", fontSize: '0.85rem' }}><span>{formatTime(a.time)}</span></td>
                     <td data-label="STATUS" className="centered-cell">
                       <div className="status-wrapper">
                         {a.status === "Completed" ? (
@@ -441,21 +466,23 @@ function Appointments({
                         )}
                       </div>
                     </td>
-                    <td data-label="ACTIONS" className="actions" style={{ textAlign: 'center' }}>
-                      <button
-                        className="action-btn edit"
-                        title="Edit Appointment"
-                        onClick={() => triggerEditModal(a)}
-                      >
-                        <IconEdit size={18} color="#d4af37" />
-                      </button>
-                      <button
-                        className="action-btn delete"
-                        title="Delete Appointment"
-                        onClick={() => triggerDeleteModal(a)}
-                      >
-                        <IconTrash size={18} color="#fb7185" />
-                      </button>
+                    <td data-label="ACTIONS" className="actions-cell">
+                      <div className="actions">
+                        <button
+                          className="action-btn edit"
+                          title="Edit Appointment"
+                          onClick={() => triggerEditModal(a)}
+                        >
+                          <IconEdit size={18} color="#d4af37" />
+                        </button>
+                        <button
+                          className="action-btn delete"
+                          title="Delete Appointment"
+                          onClick={() => triggerDeleteModal(a)}
+                        >
+                          <IconTrash size={18} color="#fb7185" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ));
@@ -478,25 +505,26 @@ function Appointments({
 
           if (totalPages > 1) {
             return (
-              <div className="pagination-wrapper" style={{ marginTop: '20px' }}>
+              <div className="pagination-wrapper">
                 <button
-                  className="page-btn"
+                  className="page-btn mobile-compact"
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(prev => prev - 1)}
                 >
-                  Previous
+                  PREV
                 </button>
                 <div className="page-info">
-                  Page {currentPage} of {totalPages}
+                  <span>{currentPage}</span> of {totalPages}
                 </div>
                 <button
-                  className="page-btn"
+                  className="page-btn mobile-compact"
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(prev => prev + 1)}
                 >
-                  Next
+                  NEXT
                 </button>
               </div>
+
             );
           }
           return null;
@@ -520,83 +548,72 @@ function Appointments({
       {/* EDIT MODAL */}
       {showEditModal && (
         <div className="modal-overlay">
-          <div className="confirm-modal" style={{ maxWidth: '500px' }}>
-            <h3>Edit Appointment</h3>
-            <div className="form-grid" style={{ gridTemplateColumns: '1fr', gap: '15px', marginTop: '20px' }}>
-              <input
-                placeholder="Customer Name"
-                value={editCustomer}
-                onChange={(e) => setEditCustomer(e.target.value)}
-              />
-              <input
-                placeholder="Mobile Number"
-                value={editMobile}
-                onChange={(e) => setEditMobile(e.target.value)}
-              />
-              <div style={{ display: 'flex', gap: '10px' }}>
+          <div className="confirm-modal boutique-modal-edit">
+            <h3 className="modal-title-boutique">Edit Appointment</h3>
+            
+            <div className="boutique-form-grid">
+              <div className="form-group-boutique">
+                <label className="boutique-label">CUSTOMER NAME</label>
                 <input
-                  type="date"
-                  value={editDate}
-                  onChange={(e) => setEditDate(e.target.value)}
+                  className="boutique-input"
+                  placeholder="Enter name..."
+                  value={editCustomer}
+                  onChange={(e) => setEditCustomer(e.target.value)}
                 />
+              </div>
+
+              <div className="form-group-boutique">
+                <label className="boutique-label">MOBILE NUMBER</label>
                 <input
-                  type="time"
-                  value={editTime}
-                  onChange={(e) => setEditTime(e.target.value)}
+                  className="boutique-input"
+                  placeholder="Enter number..."
+                  value={editMobile}
+                  onChange={(e) => setEditMobile(e.target.value)}
                 />
+              </div>
+
+              <div className="boutique-dual-row">
+                <div className="form-group-boutique flex-1">
+                  <label className="boutique-label">DATE</label>
+                  <input
+                    className="boutique-input"
+                    type="date"
+                    value={editDate}
+                    onChange={(e) => setEditDate(e.target.value)}
+                  />
+                </div>
+                <div className="form-group-boutique flex-1">
+                  <label className="boutique-label">TIME</label>
+                  <input
+                    className="boutique-input"
+                    type="time"
+                    value={editTime}
+                    onChange={(e) => setEditTime(e.target.value)}
+                  />
+                </div>
               </div>
             </div>
 
             {/* SERVICES SECTION FOR EDIT MODAL */}
-            <div className="services-section-modal" style={{
-              marginTop: '25px',
-              padding: '20px',
-              background: 'rgba(255,255,255,0.02)',
-              borderRadius: '16px',
-              border: '1px solid rgba(255,255,255,0.05)'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
-                <h4 style={{ color: 'var(--accent-gold)', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', letterSpacing: '1px', textTransform: 'uppercase', margin: 0 }}>
-                  <span style={{ fontSize: '1.2rem' }}>📋</span> SELECT SERVICES
+            <div className="services-section-boutique">
+              <div className="services-header-boutique">
+                <h4 className="services-title-boutique">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                  SELECT SERVICES
                 </h4>
+
                 <button
-                  className="add-service-mini"
+                  className="add-service-mini-boutique"
                   onClick={() => setEditServices([...editServices, { name: "", price: "" }])}
-                  style={{
-                    background: 'rgba(74, 222, 128, 0.08)',
-                    color: '#4ade80',
-                    border: '1px solid rgba(74, 222, 128, 0.2)',
-                    padding: '6px 14px',
-                    borderRadius: '8px',
-                    fontSize: '0.75rem',
-                    fontWeight: '700',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    textTransform: 'uppercase'
-                  }}
-                  onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(74, 222, 128, 0.15)'; }}
-                  onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(74, 222, 128, 0.08)'; }}
                 >
                   + Add More
                 </button>
               </div>
 
-              <div className="services-scroll-area" style={{
-                maxHeight: '220px',
-                overflowY: 'auto',
-                paddingRight: '6px',
-                paddingBottom: '80px' // Extra space for dropdown to open without clipping
-              }}>
+              <div className="services-scroll-area-boutique">
                 {editServices.map((s, i) => (
-                  <div key={i} className="service-edit-row" style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 100px 40px',
-                    gap: '12px',
-                    marginBottom: '12px',
-                    alignItems: 'center',
-                    animation: 'fadeIn 0.3s ease'
-                  }}>
-                    <div className="input-group-modal">
+                  <div key={i} className="service-edit-row-boutique">
+                    <div className="dropdown-wrapper-boutique">
                       <CustomDropdown
                         services={services}
                         setServices={setServices}
@@ -612,9 +629,10 @@ function Appointments({
                         }}
                       />
                     </div>
-                    <div className="price-input-modal" style={{ position: 'relative' }}>
+                    <div className="price-wrapper-boutique">
                       <input
                         type="number"
+                        className="boutique-price-input"
                         placeholder="Price"
                         value={s.price}
                         onChange={(e) => {
@@ -622,41 +640,13 @@ function Appointments({
                           updated[i].price = e.target.value;
                           setEditServices(updated);
                         }}
-                        style={{
-                          width: '100%',
-                          height: '48px',
-                          borderRadius: '12px',
-                          background: 'rgba(0,0,0,0.3)',
-                          border: '1px solid rgba(255,255,255,0.1)',
-                          color: 'var(--accent-gold)',
-                          padding: '0 8px',
-                          fontSize: '1rem',
-                          textAlign: 'center',
-                          fontWeight: '600',
-                          fontFamily: 'monospace'
-                        }}
                       />
                     </div>
+
+
                     <button
-                      className="remove-btn-modal"
-                      title="Remove Row"
-                      style={{
-                        width: '36px',
-                        height: '36px',
-                        padding: 0,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderRadius: '10px',
-                        background: 'rgba(251, 113, 133, 0.08)',
-                        color: '#fb7185',
-                        border: '1px solid rgba(251, 113, 133, 0.2)',
-                        cursor: 'pointer',
-                        fontSize: '0.9rem',
-                        transition: 'all 0.3s ease'
-                      }}
-                      onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(251, 113, 133, 0.2)'; e.currentTarget.style.transform = 'scale(1.1)'; }}
-                      onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(251, 113, 133, 0.08)'; e.currentTarget.style.transform = 'scale(1)'; }}
+                      className="remove-service-btn-boutique"
+                      title="Remove"
                       onClick={() => {
                         const updated = editServices.filter((_, idx) => idx !== i);
                         setEditServices(updated);
@@ -669,13 +659,14 @@ function Appointments({
               </div>
             </div>
 
-            <div className="modal-actions" style={{ marginTop: '25px', display: 'flex', gap: '15px' }}>
-              <button className="cancel-btn" style={{ flex: 1, height: '48px' }} onClick={() => setShowEditModal(false)}>Cancel</button>
-              <button className="book-btn" style={{ flex: 2, height: '48px', margin: 0 }} onClick={saveEdit}>Save Changes</button>
+            <div className="boutique-modal-footer">
+              <button className="boutique-cancel-btn" onClick={() => setShowEditModal(false)}>CANCEL</button>
+              <button className="boutique-save-btn" onClick={saveEdit}>SAVE CHANGES</button>
             </div>
           </div>
         </div>
       )}
+
       {/* GENERIC CONFIRMATION / ALERT MODAL */}
       {confirmModal.show && (
         <div className="modal-overlay" style={{ zIndex: 300000 }}>

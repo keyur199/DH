@@ -74,19 +74,25 @@ function InvoiceHistory({ invoices, setInvoices }) {
 
     return (
         <div className="history-page">
-            <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h2 style={{ margin: 0 }}>Invoice History <span className="badge-count">{totalItems}</span></h2>
-                <input
-                    className="search-box"
-                    style={{ margin: 0, width: '300px' }}
-                    placeholder="Search name or mobile..."
-                    value={search}
-                    onChange={handleSearchChange}
-                />
+            <div className="dashboard-header-redux">
+                <h2 className="page-title">
+                    Invoice History 
+                    <span className="badge-count">{totalItems}</span>
+                </h2>
+                <div className="dashboard-filters-wrapper">
+                    <input
+                        className="search-box"
+                        placeholder="Search name or mobile..."
+                        value={search}
+                        onChange={handleSearchChange}
+                    />
+                </div>
             </div>
 
-            <div className="table-card invoice-card" style={{ overflowX: 'auto' }}>
-                <table className="premium-table" style={{ tableLayout: 'fixed', width: '100%' }}>
+
+            <div className="table-container history-container">
+                <table className="premium-table">
+
                     <thead>
                         <tr>
                             <th style={{ width: '5%', textAlign: 'center' }}>#</th>
@@ -118,17 +124,18 @@ function InvoiceHistory({ invoices, setInvoices }) {
                                 <td data-label="AMOUNT" style={{ fontWeight: '600', color: 'var(--accent-gold)', textAlign: 'center' }}>₹{inv.totalAmount ?? inv.total ?? 0}</td>
                                 <td data-label="ACTIONS" className="actions-cell">
                                     <div className="actions">
-                                        <button className="action-btn primary" title="Download PDF" onClick={() => downloadPDF(inv)}>
+                                        <button className="action-btn" title="Download PDF" onClick={() => downloadPDF(inv)}>
                                             <IconPDF size={18} color="#60a5fa" />
                                         </button>
-                                        <button className="action-btn success" title="Send WhatsApp" onClick={() => sendWhatsApp(inv)}>
+                                        <button className="action-btn" title="Send WhatsApp" onClick={() => sendWhatsApp(inv)}>
                                             <IconWhatsApp size={18} color="#4ade80" />
                                         </button>
-                                        <button className="action-btn delete" title="Delete Invoice" onClick={() => triggerDeleteModal(inv)}>
+                                        <button className="action-btn" title="Delete Invoice" onClick={() => triggerDeleteModal(inv)}>
                                             <IconTrash size={18} color="#fb7185" />
                                         </button>
                                     </div>
                                 </td>
+
                             </tr>
                             );
                         })}
@@ -144,17 +151,17 @@ function InvoiceHistory({ invoices, setInvoices }) {
                 {totalPages > 1 && (
                     <div className="pagination-wrapper">
                         <button 
-                            className="page-btn" 
+                            className="page-btn mobile-compact" 
                             disabled={currentPage === 1}
                             onClick={() => setCurrentPage(prev => prev - 1)}
                         >
-                            Previous
+                            Prev
                         </button>
                         <div className="page-info">
-                            Page {currentPage} of {totalPages}
+                            Page <span>{currentPage}</span> of <span>{totalPages}</span>
                         </div>
                         <button 
-                            className="page-btn" 
+                            className="page-btn mobile-compact" 
                             disabled={currentPage === totalPages}
                             onClick={() => setCurrentPage(prev => prev + 1)}
                         >
@@ -162,6 +169,7 @@ function InvoiceHistory({ invoices, setInvoices }) {
                         </button>
                     </div>
                 )}
+
             </div>
 
             {/* CUSTOM DELETE CONFIRMATION MODAL */}

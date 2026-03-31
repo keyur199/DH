@@ -114,33 +114,45 @@ function Services({ services, setServices }) {
   return (
     <div className="services-page">
       <div className="services-card">
-        <div className="card-header">
-           <h2>Manage Services <span className="badge-count" style={{ fontSize: '1rem', background: 'var(--accent-gold)', color: '#000', padding: '2px 10px', borderRadius: '20px', marginLeft: '10px' }}>{totalItems}</span></h2>
-          <div className="add-service-form">
+        <div className="card-header-redux">
+          <h2 className="title-medium">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '12px' }}><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+            Manage Services 
+            <span className="badge-count">{totalItems}</span>
+          </h2>
+          <div className="add-service-form-redux">
             <input 
               placeholder="New Service Name" 
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
+              className="srv-name-input"
             />
             <input 
               type="number"
-              placeholder="Default Price" 
+              placeholder="Price" 
               value={newPrice}
               onChange={(e) => setNewPrice(e.target.value)}
+              className="srv-price-input"
             />
-            <button className="add-btn" onClick={addService}>Add Service</button>
+            <button className="add-btn-premium" onClick={addService}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Add Service
+            </button>
           </div>
         </div>
 
-        <table className="premium-table">
-          <thead>
-            <tr>
-              <th style={{ width: "40px" }}>#</th>
-              <th style={{ textAlign: 'center' }}>SERVICE NAME</th>
-              <th style={{ width: "120px", textAlign: 'center' }}>PRICE</th>
-              <th className="centered-cell" style={{ width: "130px", textAlign: 'center !important' }}>ACTIONS</th>
-            </tr>
-          </thead>
+
+        <div className="table-container">
+          <table className="premium-table">
+            <thead>
+              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <th style={{ width: "60px" }}>#</th>
+                <th style={{ textAlign: 'left', paddingLeft: '30px' }}>SERVICE NAME</th>
+                <th style={{ width: "160px", textAlign: 'center' }}>PRICE</th>
+                <th style={{ width: "140px", textAlign: 'center' }}>ACTIONS</th>
+              </tr>
+            </thead>
+
           <tbody>
             {currentItems.map((s, idx) => (
               <tr key={s._id} className="premium-row">
@@ -170,17 +182,17 @@ function Services({ services, setServices }) {
                     `₹ ${s.price}`
                   )}
                 </td>
-                <td data-label="ACTIONS" className="actions" style={{ textAlign: 'center' }}>
+                <td data-label="ACTIONS" className="actions-cell">
                   {editingId === s._id ? (
                     <div className="actions">
                       <button className="action-btn success" title="Save Changes" onClick={saveEdit}><IconCheck size={18} color="#4ade80" /></button>
                       <button className="action-btn delete" title="Cancel" onClick={() => setEditingId(null)}><IconX size={18} color="#fb7185" /></button>
                     </div>
                   ) : (
-                    <>
+                    <div className="actions">
                       <button className="action-btn edit" title="Edit" onClick={() => startEdit(s)}><IconEdit size={18} color="#d4af37" /></button>
                       <button className="action-btn delete" title="Delete" onClick={() => triggerDeleteModal(s)}><IconTrash size={18} color="#fb7185" /></button>
-                    </>
+                    </div>
                   )}
                 </td>
               </tr>
@@ -194,29 +206,32 @@ function Services({ services, setServices }) {
             )}
           </tbody>
         </table>
+      </div>
+
 
         {/* Pagination Controls */}
         {totalPages > 1 && (
-            <div className="pagination-wrapper" style={{ marginTop: '20px' }}>
+            <div className="pagination-wrapper">
                 <button 
-                    className="page-btn" 
+                    className="page-btn mobile-compact" 
                     disabled={currentPage === 1}
                     onClick={() => setCurrentPage(prev => prev - 1)}
                 >
-                    Previous
+                    PREV
                 </button>
                 <div className="page-info">
-                    Page {currentPage} of {totalPages}
+                    <span>{currentPage}</span> of {totalPages}
                 </div>
                 <button 
-                    className="page-btn" 
+                    className="page-btn mobile-compact" 
                     disabled={currentPage === totalPages}
                     onClick={() => setCurrentPage(prev => prev + 1)}
                 >
-                    Next
+                    NEXT
                 </button>
             </div>
         )}
+
       </div>
 
       {/* CUSTOM DELETE CONFIRMATION MODAL */}
