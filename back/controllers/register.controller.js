@@ -21,6 +21,13 @@ export const createRegister = async (req, res) => {
       return sendBadRequestResponse(res, "Email or phone already registered");
     }
 
+    if (role === 'admin') {
+      const adminExists = await Register.findOne({ role: 'admin' });
+      if (adminExists) {
+        return sendBadRequestResponse(res, "Admin already exists. Only one admin account can be created.");
+      }
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newRegister = await Register.create({
@@ -101,6 +108,12 @@ export const updateProfileUser = async (req, res) => {
     if (email) existingUser.email = email;
 
     if (role) {
+      if (role === 'admin' && existingUser.role !== 'admin') {
+        const adminExists = await Register.findOne({ role: 'admin' });
+        if (adminExists) {
+          return sendBadRequestResponse(res, "Admin already exists. Only one admin allowed.");
+        }
+      }
       existingUser.role = role;
       existingUser.isAdmin = role === 'admin';
     }
@@ -135,6 +148,12 @@ export const updateProfileAdmin = async (req, res) => {
     if (email) existingAdmin.email = email;
 
     if (role) {
+      if (role === 'admin' && existingAdmin.role !== 'admin') {
+        const adminExists = await Register.findOne({ role: 'admin' });
+        if (adminExists) {
+          return sendBadRequestResponse(res, "Admin already exists. Only one admin allowed.");
+        }
+      }
       existingAdmin.role = role;
       existingAdmin.isAdmin = role === 'admin';
     }
