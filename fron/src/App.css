@@ -340,7 +340,60 @@ h2 {
     text-align: left !important;
 }
 
-/* NEW PREMIUM TABLE STYLES */
+/* APPOINTMENTS HEADER & FILTERS DEFAULT (DESKTOP) */
+.appointments-header-mobile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+.appointments-filters-mobile {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+}
+
+.boutique-input-search {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    width: 240px;
+    transition: border-color 0.3s ease;
+}
+
+.boutique-input-search:focus {
+    border-color: var(--accent-gold);
+    outline: none;
+}
+
+.boutique-input-date {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.date-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-label-boutique {
+    font-size: 0.8rem;
+    color: var(--accent-gold);
+    font-weight: 600;
+}
+
+/* APPOINTMENTS TABLE */
 .premium-table {
     width: 100%;
     border-collapse: separate;
@@ -5058,6 +5111,531 @@ body.theme-white .filter-group label {
             margin-top: 0 !important;
             padding-top: 15px !important;
             padding-bottom: 50px !important;
+        }
+    }
+
+    /* ============================================================
+       BOUTIQUE PERFECTION: 440PX PINNED RESPONSIVENESS
+       ============================================================ */
+    @media (max-width: 440px) {
+        .mobile-toggle-header {
+            height: 75px !important;
+            padding: 0 18px !important;
+            background: rgba(0, 0, 0, 0.95) !important;
+            backdrop-filter: blur(25px) !important;
+            -webkit-backdrop-filter: blur(25px) !important;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.15) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+        }
+
+        .mini-logo-box {
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .mini-logo-box img {
+            height: 48px !important;
+            /* Grand logo visibility */
+            width: auto !important;
+            border: 2px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 50% !important;
+        }
+
+        .menu-toggle-btn {
+            width: 48px !important;
+            height: 48px !important;
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .dashboard-page {
+            padding: 100px 16px 80px !important;
+            /* Universal mobile buffer */
+        }
+
+        .page-title {
+            text-align: center !important;
+            font-size: 1.75rem !important;
+            margin-bottom: 40px !important;
+            letter-spacing: 2px !important;
+            font-family: var(--font-heading) !important;
+            text-transform: uppercase !important;
+        }
+
+        .cards {
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
+        }
+
+        .card {
+            padding: 30px 24px !important;
+            border-radius: 28px !important;
+            border: 1px solid rgba(212, 175, 55, 0.1) !important;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4) !important;
+        }
+
+        .card h3 {
+            font-size: 1rem !important;
+            letter-spacing: 1px !important;
+        }
+
+        .boutique-badge {
+            font-size: 1.1rem !important;
+        }
+
+        /* REVENUE CHART LUXURY FIX */
+        .revenue-chart {
+            padding: 35px 18px !important;
+            background: rgba(0, 0, 0, 0.4) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-radius: 30px !important;
+            margin-bottom: 30px !important;
+        }
+
+        .chart-header h3 {
+            font-size: 1rem !important;
+            margin-bottom: 35px !important;
+            color: var(--accent-gold) !important;
+        }
+
+        /* PERFORMANCE LIST BOUTIQUE REFINEMENT */
+        .services-performance {
+            padding: 35px 22px !important;
+            border-radius: 32px !important;
+            background: #000000 !important;
+            border: 1px solid rgba(212, 175, 55, 0.2) !important;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8) !important;
+        }
+
+        .perf-list {
+            gap: 30px !important;
+        }
+
+        .perf-item {
+            gap: 15px !important;
+            padding-bottom: 15px !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+
+        .perf-item:last-child {
+            border-bottom: none !important;
+        }
+
+        .perf-info {
+            font-size: 1rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.5px !important;
+            text-transform: uppercase !important;
+        }
+
+        .perf-info span:last-child {
+            color: var(--accent-gold) !important;
+            font-size: 0.9rem !important;
+            letter-spacing: 1px !important;
+        }
+
+        .perf-track {
+            height: 16px !important;
+            /* Cinematic Thickness */
+            background: rgba(255, 255, 255, 0.03) !important;
+            border-radius: 50px !important;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5) !important;
+        }
+
+        .perf-bar {
+            border-radius: 50px !important;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2) !important;
+            background: linear-gradient(90deg, var(--accent-gold) 0%, #fef3c7 100%) !important;
+        }
+
+        /* FILTERS BOUTIQUE ADAPTATION */
+        .dashboard-header-redux {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            width: 100% !important;
+        }
+
+        .dashboard-filters-wrapper {
+            width: 100% !important;
+            margin-top: 10px !important;
+        }
+
+        .dashboard-filters {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+        }
+
+        .filter-group input {
+            height: 52px !important;
+            border-radius: 12px !important;
+            text-align: center !important;
+        }
+
+        .quick-filters {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 10px !important;
+            margin-top: 20px !important;
+        }
+
+        .q-btn {
+            width: 100% !important;
+            height: 44px !important;
+            font-size: 0.65rem !important;
+            padding: 0 !important;
+            border-radius: 30px !important;
+            white-space: nowrap !important;
+        }
+
+        /* ============================================================
+           APPOINTMENTS PAGE BOUTIQUE PERFECTION (440PX)
+           ============================================================ */
+        .appointments-header-mobile {
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 12px !important; /* Extremely tight boutique gap */
+            margin-bottom: 25px !important;
+            text-align: center !important;
+        }
+
+        .appointments-title-mobile {
+            font-size: 1.2rem !important; /* Refined for mobile balance */
+            color: var(--accent-gold) !important;
+            letter-spacing: 1px !important;
+            margin: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .appointments-filters-mobile {
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 10px !important;
+            padding: 0 !important;
+        }
+
+        .boutique-input-search,
+        .boutique-input-date {
+            width: 100% !important;
+            height: 48px !important; /* Premium slender height */
+            background: rgba(255, 255, 255, 0.02) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 12px !important;
+            color: #fff !important;
+            text-align: center !important;
+            font-size: 0.85rem !important;
+            box-sizing: border-box !important;
+        }
+
+        .date-filter {
+            display: flex !important;
+            flex-direction: row !important; /* Inline date for boutique efficiency */
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            margin-top: 4px !important;
+        }
+
+        .date-label-boutique {
+            font-size: 0.65rem !important;
+            color: var(--accent-gold) !important;
+            opacity: 0.6 !important;
+            letter-spacing: 1.5px !important;
+        }
+
+        /* CARD ARCHITECTURE PERFECTING */
+        .premium-table tr {
+            padding: 24px 18px 50px !important; /* SIGNIFICANT BOTTOM PADDING TO STOP CLIPPING */
+            background: rgba(255, 255, 255, 0.01) !important;
+            border: 1px solid rgba(212, 175, 55, 0.08) !important;
+            border-radius: 20px !important;
+            margin-bottom: 25px !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            position: relative !important;
+        }
+
+        .premium-table td {
+            padding: 10px 0 !important;
+            border: none !important;
+            width: 100% !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+        }
+
+        .premium-table td::before {
+            font-size: 0.65rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 1.2px !important;
+            color: var(--accent-gold) !important;
+            text-transform: uppercase !important;
+            opacity: 0.8 !important;
+            margin-right: auto !important;
+        }
+
+        .premium-table td span {
+            font-size: 0.9rem !important;
+            font-weight: 700 !important;
+            color: #fff !important;
+            text-align: right !important;
+            margin-left: auto !important;
+        }
+
+        /* High-Definition ID Strip */
+        .premium-table td[data-label="#"] {
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.05) !important;
+            margin-bottom: 12px !important;
+            padding-bottom: 12px !important;
+        }
+
+        .premium-table td[data-label="#"]::before { content: "RECORD ID" !important; }
+
+        /* STATUS BADGE CENTERED AT END */
+        .premium-table td[data-label="STATUS"] {
+            margin-top: 10px !important;
+        }
+
+        .status-btn {
+            height: 34px !important;
+            padding: 0 15px !important;
+            font-size: 0.75rem !important;
+            border-radius: 30px !important;
+        }
+
+        /* CLEAN INTEGRATED ACTIONS (NO EXTRA ROW) */
+        .premium-table td[data-label="ACTIONS"] {
+            margin-top: 25px !important; /* Space from content */
+            padding-top: 0 !important;
+            border-top: none !important; /* REMOVED EXTRA ROW BORDER */
+            justify-content: flex-end !important;
+        }
+
+        .premium-table td[data-label="ACTIONS"]::before {
+            display: none !important; /* REMOVE LABEL TEXT */
+        }
+
+        .premium-table td[data-label="ACTIONS"] .actions {
+            display: flex !important;
+            gap: 15px !important;
+            margin-left: auto !important;
+        }
+
+        .action-btn {
+            width: 48px !important; /* Slightly larger for touch */
+            height: 48px !important;
+            border-radius: 14px !important;
+            background: rgba(255, 255, 255, 0.03) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .action-btn {
+            width: 42px !important;
+            height: 42px !important;
+            border-radius: 12px !important;
+            background: rgba(255, 255, 255, 0.03) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        }
+
+        /* SIDEBAR BOUTIQUE PERFECTION: 440PX ONLY */
+        .sidebar {
+            width: 290px !important; /* Premium Boutique Width */
+            background: rgba(0, 0, 0, 0.98) !important;
+            backdrop-filter: blur(40px) !important;
+            -webkit-backdrop-filter: blur(40px) !important;
+            padding: 70px 24px 40px !important; /* Balanced top/bottom breathing */
+            overflow-y: auto !important;
+            scrollbar-width: none !important;
+            overscroll-behavior: contain !important;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            display: none !important;
+        }
+
+        .sidebar .logo {
+            margin-bottom: 40px !important;
+            display: flex !important;
+            justify-content: center !important;
+        }
+
+        .nav-logo-container .navbar-logo {
+            max-width: 140px !important; /* Crisp mobile branding */
+            height: auto !important;
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.2)) !important;
+        }
+
+        .sidebar .menu {
+            gap: 8px !important; /* Minimalist luxury gaps */
+            margin-bottom: 40px !important;
+        }
+
+        .sidebar .menu button {
+            height: 54px !important;
+            font-size: 1.05rem !important;
+            letter-spacing: 1.5px !important;
+            border-radius: 14px !important;
+            padding-left: 20px !important;
+            text-transform: uppercase !important;
+            font-weight: 700 !important;
+        }
+
+        .sidebar-footer {
+            margin-top: auto !important;
+            padding: 20px 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 25px !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+
+        .theme-picker {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 12px !important;
+            justify-items: center !important;
+            width: 100% !important;
+        }
+
+        .theme-btn {
+            width: 32px !important;
+            height: 32px !important;
+            border: 2px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .theme-btn.active-theme {
+            transform: scale(1.2) !important;
+            border-color: var(--accent-gold) !important;
+        }
+
+        .nav-logout-btn {
+            width: 100% !important;
+            height: 52px !important;
+            font-size: 0.9rem !important;
+            letter-spacing: 2px !important;
+            margin-top: 5px !important;
+            background: rgba(239, 68, 68, 0.05) !important;
+            border: 1px solid rgba(239, 68, 68, 0.15) !important;
+            border-radius: 12px !important;
+        }
+
+        /* BILLING BOUTIQUE PERFECTION: 440PX ONLY */
+        .billing-card {
+            padding: 35px 20px !important;
+            border-radius: 30px !important;
+        }
+
+        .billing-card h2 {
+            font-size: 1.5rem !important;
+            text-align: center !important;
+            margin-bottom: 30px !important;
+            letter-spacing: 1.5px !important;
+        }
+
+        .customer-grid {
+            grid-template-columns: 1fr !important;
+            gap: 15px !important;
+        }
+
+        .customer-grid input {
+            height: 52px !important;
+            border-radius: 14px !important;
+            text-align: center !important;
+        }
+
+        .services-box {
+            margin-top: 35px !important;
+        }
+
+        .service-header-row {
+            display: none !important; /* Hide header row on mobile for vertical flow */
+        }
+
+        .service-row {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr 50px !important; /* Proper mobile grid */
+            grid-template-areas: 
+                "srv srv srv"
+                "qty prc del" !important;
+            gap: 12px !important;
+            background: rgba(255, 255, 255, 0.02) !important;
+            padding: 15px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            margin-bottom: 12px !important;
+        }
+
+        .service-row .input-group {
+            grid-area: srv !important;
+        }
+
+        .service-row .qty-input {
+            grid-area: qty !important;
+            width: 100% !important;
+            text-align: center !important;
+            height: 48px !important;
+            border-radius: 10px !important;
+        }
+
+        .service-row .price-input {
+            grid-area: prc !important;
+            width: 100% !important;
+            text-align: center !important;
+            height: 48px !important;
+            border-radius: 10px !important;
+        }
+
+        .service-row .delete-btn-premium {
+            grid-area: del !important;
+            width: 48px !important;
+            height: 48px !important;
+            margin: 0 !important;
+        }
+
+        .add-service-btn-premium {
+            height: 56px !important;
+            margin-top: 20px !important;
+            border-radius: 16px !important;
+            letter-spacing: 1px !important;
+        }
+
+        /* CINEMATIC BILLING FOOTER */
+        .invoice-footer {
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 20px !important;
+            margin-top: 45px !important;
+            padding-top: 30px !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+            text-align: center !important;
+        }
+
+        .invoice-footer h3 {
+            font-size: 1.6rem !important;
+            color: var(--accent-gold) !important;
+            font-family: var(--font-heading) !important;
+            margin: 0 !important;
+            font-weight: 300 !important;
+            letter-spacing: 1px !important;
+        }
+
+        .generate-btn {
+            width: 100% !important;
+            padding: 20px !important;
+            font-size: 1.1rem !important;
+            letter-spacing: 3px !important;
+            margin-top: 0 !important;
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.25) !important;
         }
     }
 

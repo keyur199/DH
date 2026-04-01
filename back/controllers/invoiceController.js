@@ -146,7 +146,7 @@ export const uploadInvoice = async (req, res) => {
 
         const fileName = `luxury_invoice_${invoiceId || Date.now()}.pdf`;
         const publicPath = path.join(process.cwd(), 'public', 'invoices');
-        
+
         if (!fs.existsSync(publicPath)) {
             fs.mkdirSync(publicPath, { recursive: true });
         }

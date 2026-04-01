@@ -342,45 +342,30 @@ function Appointments({
       </div>
 
       <div className="table-card appointments-card glass-card mt-25" style={{ padding: '20px' }}>
-        <div className="table-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-          <h3 className="title-small" style={{ display: 'flex', alignItems: 'center', margin: 0 }}>
+        <div className="table-header-row appointments-header-mobile">
+          <h3 className="title-small appointments-title-mobile">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px' }}><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
             Latest Appointments
           </h3>
 
 
-          <div className="table-filters" style={{ display: 'flex', gap: '12px' }}>
-            <div className="filter-item">
+          <div className="table-filters appointments-filters-mobile">
+            <div className="filter-item search-filter">
               <input
                 type="text"
                 placeholder="Search by Name/Mobile..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  color: 'white',
-                  padding: '8px 12px',
-                  borderRadius: '8px',
-                  fontSize: '0.85rem',
-                  width: '200px'
-                }}
+                className="boutique-input-search"
               />
             </div>
-            <div className="filter-item" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--accent-gold)', fontWeight: '600' }}>DATE:</span>
+            <div className="filter-item date-filter">
+              <span className="date-label-boutique">DATE:</span>
               <input
                 type="date"
                 value={searchDate}
                 onChange={(e) => setSearchDate(e.target.value)}
-                style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  color: 'white',
-                  padding: '6px 10px',
-                  borderRadius: '8px',
-                  fontSize: '0.85rem'
-                }}
+                className="boutique-input-date"
               />
               {searchDate && (
                 <button
