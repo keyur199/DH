@@ -163,7 +163,7 @@ export const uploadInvoice = async (req, res) => {
             return res.json({ success: true, url });
         } catch (fsError) {
             if (fsError.code === 'EROFS') {
-                console.warn("⚠️ System is read-only. Skipping file write.");
+                console.warn("⚠️ System is read-only (Vercel). Skipping file write.");
                 return res.json({ success: false, message: "Server is read-only. Using direct sharing fallback." });
             }
             throw fsError;
