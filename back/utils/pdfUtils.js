@@ -21,6 +21,16 @@ function formatCurrency(rs) {
 
 export const generateInvoicePDF = (invoice) => {
     return new Promise((resolve, reject) => {
+        // THE ULTIMATE VERCEL CHECK: Always skip if Vercel or read-only path
+        const isReadOnly = process.env.VERCEL || 
+                           process.env.NODE_ENV === 'production' || 
+                           path.resolve(process.cwd()).includes('/var/task');
+
+        if (isReadOnly) {
+            console.log("🚀 Vercel environment detected. Skipping disk-based PDF storage.");
+            return resolve(null);
+        }
+
         try {
             // Create target directory if it doesn't exist
             const invoicesDir = path.join(__dirname, '..', 'public', 'invoices');
@@ -164,6 +174,10 @@ export const generateInvoicePDF = (invoice) => {
             });
 
             stream.on('error', (err) => {
+                if (err.code === 'EROFS') {
+                    console.warn("⚠️ System write denied (Vercel). Returning success without PDF.");
+                    return resolve(null);
+                }
                 reject(err);
             });
         } catch (error) {

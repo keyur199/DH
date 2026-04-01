@@ -33,9 +33,17 @@ export const createInvoice = async (req, res) => {
             appointmentId: req.body.appointmentId || null
         });
 
-        const invoicePdfUrl = await generateInvoicePDF(newInvoice);
-        newInvoice.pdfUrl = invoicePdfUrl;
-        await newInvoice.save();
+        try {
+            const invoicePdfUrl = await generateInvoicePDF(newInvoice);
+            newInvoice.pdfUrl = invoicePdfUrl;
+            await newInvoice.save();
+        } catch (pdfError) {
+            if (pdfError.code === 'EROFS' || pdfError.message.includes('read-only')) {
+                console.warn("⚠️ PDF generation skipped due to read-only system.");
+            } else {
+                throw pdfError;
+            }
+        }
 
         return sendCreatedResponse(res, "Invoice created successfully", newInvoice);
     } catch (error) {
@@ -140,6 +148,11 @@ export const deleteInvoice = async (req, res) => {
 };
 
 export const uploadInvoice = async (req, res) => {
+    // VERCEL CHECK: Vercel functions are read-only. We skip this step.
+    if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+        return res.json({ success: false, message: "Server is read-only (Vercel). Using text-only sharing fallback." });
+    }
+
     try {
         const { pdfBase64, invoiceId } = req.body;
         if (!pdfBase64) return res.status(400).json({ success: false, message: "No PDF data provided" });
