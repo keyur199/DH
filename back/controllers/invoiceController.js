@@ -147,20 +147,27 @@ export const uploadInvoice = async (req, res) => {
         const fileName = `luxury_invoice_${invoiceId || Date.now()}.pdf`;
         const publicPath = path.join(process.cwd(), 'public', 'invoices');
         
-        if (!fs.existsSync(publicPath)) {
-            fs.mkdirSync(publicPath, { recursive: true });
+        try {
+            if (!fs.existsSync(publicPath)) {
+                fs.mkdirSync(publicPath, { recursive: true });
+            }
+            const filePath = path.join(publicPath, fileName);
+            const buffer = Buffer.from(pdfBase64, 'base64');
+            fs.writeFileSync(filePath, buffer);
+            
+            // Construct server URL
+            const protocol = req.protocol;
+            const host = req.get('host');
+            const url = `${protocol}://${host}/public/invoices/${fileName}`;
+
+            return res.json({ success: true, url });
+        } catch (fsError) {
+            if (fsError.code === 'EROFS') {
+                console.warn("⚠️ System is read-only. Skipping file write.");
+                return res.json({ success: false, message: "Server is read-only. Using direct sharing fallback." });
+            }
+            throw fsError;
         }
-
-        const filePath = path.join(publicPath, fileName);
-        const buffer = Buffer.from(pdfBase64, 'base64');
-        fs.writeFileSync(filePath, buffer);
-
-        // Construct server URL
-        const protocol = req.protocol;
-        const host = req.get('host');
-        const url = `${protocol}://${host}/public/invoices/${fileName}`;
-
-        return res.json({ success: true, url });
     } catch (error) {
         console.error("Upload error:", error);
         return res.status(500).json({ success: false, message: error.message });

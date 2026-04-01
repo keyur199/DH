@@ -24,15 +24,34 @@ export const generateInvoicePDF = (invoice) => {
         try {
             // Create target directory if it doesn't exist
             const invoicesDir = path.join(__dirname, '..', 'public', 'invoices');
-            if (!fs.existsSync(invoicesDir)) {
-                fs.mkdirSync(invoicesDir, { recursive: true });
+            
+            try {
+                if (!fs.existsSync(invoicesDir)) {
+                    fs.mkdirSync(invoicesDir, { recursive: true });
+                }
+            } catch (err) {
+                if (err.code === 'EROFS') {
+                    console.warn("⚠️ Read-only filesystem detected (Vercel). Skipping server-side PDF generation.");
+                    return resolve(null); 
+                }
+                throw err;
             }
 
             const fileName = `invoice_${invoice._id}.pdf`;
             const filePath = path.join(invoicesDir, fileName);
 
             const doc = new PDFDocument({ size: "A4", margin: 50 });
-            const stream = fs.createWriteStream(filePath);
+            let stream;
+            
+            try {
+                stream = fs.createWriteStream(filePath);
+            } catch (err) {
+                if (err.code === 'EROFS') {
+                    console.warn("⚠️ Read-only filesystem detected (Vercel). Skipping server-side PDF generation.");
+                    return resolve(null);
+                }
+                throw err;
+            }
             
             // Pipe document to the stream
             doc.pipe(stream);

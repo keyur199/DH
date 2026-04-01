@@ -167,37 +167,63 @@ export const downloadPDF = async (invoice, shouldSave = true) => {
 
 /* =========================
    SHARE LOGIC
-========================= */
+========================= */const isMobileDevice = () => /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
 export const sendWhatsApp = async (invoice) => {
-   showStatusToast("Propar Sharing...", "Generating your 'ek j row' luxury PDF for direct sharing.");
+   const displayId = (invoice.invoiceId || (invoice.id ? String(invoice.id) : (invoice._id ? invoice._id.toString().slice(-2).toUpperCase() : "01"))).replace("INV-", "").padStart(2, "0");
+   const isMobile = isMobileDevice();
+   
+   console.log("🚀 WhatsApp Share Triggered. Device:", isMobile ? "Mobile" : "Desktop");
+   showStatusToast("WhatsApp Sharing...", "Preparing your professional invoice link.");
+
    const doc = await downloadPDF(invoice, false);
    const pdfBlob = doc.output('blob');
-
-   const displayId = (invoice.invoiceId || (invoice.id ? String(invoice.id) : (invoice._id ? invoice._id.toString().slice(-2).toUpperCase() : "01"))).replace("INV-", "").padStart(2, "0");
-   const fileName = `DH_MAKEUP_STUDIO_INV_${displayId}.pdf`;
+   const fileName = `DH_INV_${displayId}.pdf`;
    const pdfFile = new File([pdfBlob], fileName, { type: "application/pdf" });
 
-   if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+   // 1. TRY NATIVE SHARE ONLY ON MOBILE
+   if (isMobile && navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
       try {
          await navigator.share({
             files: [pdfFile],
             title: `Invoice ${displayId}`,
-            text: `🧾 *DH MAKEUP STUDIO & ACADEMY*\n\nYour invoice for *${invoice.customerName || "Customer"}* is ready!\n\nTotal: ₹${invoice.totalAmount || invoice.total || 0}`
+            text: `🧾 *DH MAKEUP STUDIO*\n\nInvoice for *${invoice.customerName || "Customer"}*\nTotal: ₹${invoice.totalAmount || invoice.total || 0}`
          });
-         return;
-      } catch (err) { }
+         return; 
+      } catch (err) {
+         if (err.name === 'AbortError') return;
+         console.error("Native share failed", err);
+      }
    }
 
-   const pdfBase64 = doc.output('datauristring').split(',')[1];
+   // 2. DESKTOP OR MOBILE FALLBACK: Upload to Server
+   const apiBase = process.env.REACT_APP_API_BASE || "http://localhost:8000/api";
+   const phoneRaw = String(invoice.mobileNumber || invoice.mobile || "").replace(/\D/g, "");
+   const phone = phoneRaw.length === 10 ? "91" + phoneRaw : phoneRaw;
+   const messageTemplate = `🧾 *DH MAKEUP STUDIO & ACADEMY*\n\nYour *Invoice INV-${displayId}* for *${invoice.customerName || "Customer"}* is ready!\n\nTotal: ₹${invoice.totalAmount || invoice.total || 0}\n\n`;
+
    try {
-      const response = await fetch((process.env.REACT_APP_API_BASE || "http://localhost:8000/api") + "/upload-invoice", {
+      showStatusToast("Sharing...", "Generating direct WhatsApp message.");
+      const pdfBase64 = doc.output('datauristring').split(',')[1];
+      const response = await fetch(`${apiBase}/upload-invoice`, {
          method: "POST",
          headers: { "Content-Type": "application/json" },
          body: JSON.stringify({ pdfBase64, invoiceId: displayId })
       });
+      
       const data = await response.json();
-      const url = "https://wa.me/91" + (invoice.mobileNumber || invoice.mobile || "") + "?text=" + encodeURIComponent(`🧾 *DH MAKEUP STUDIO & ACADEMY*\n\nYour *Invoice INV-${displayId}* is ready!\n\n📥 *VIEW & DOWNLOAD:* \n${data.url}`);
-      window.open(url, '_blank');
-   } catch (err) { }
+      if (response.ok && data.url) {
+         const finalMessage = messageTemplate + `📥 *VIEW & DOWNLOAD:* \n${data.url}`;
+         window.open(`https://wa.me/${phone}?text=${encodeURIComponent(finalMessage)}`, '_blank');
+         return; // SUCCESS with link
+      } else {
+         console.warn("⚠️ Server upload not available, falling back to text-only.");
+      }
+   } catch (err) {
+      console.warn("⚠️ Connection failed, sending text-only fallback.", err);
+   }
+
+   // 3. LAST RESORT: Just open WhatsApp with message (Reliable & Works everywhere)
+   const fallbackUrl = `https://wa.me/${phone}?text=${encodeURIComponent(messageTemplate + "Please check your email/manual download for the PDF copy.")}`;
+   window.open(fallbackUrl, '_blank');
 };
