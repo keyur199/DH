@@ -10,9 +10,17 @@ dns.setServers(["1.1.1.1", "8.8.8.8"]);
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Middleware to parse JSON bodies
+// Middleware configuration
 app.use(express.json());
-app.use(cors());
+
+// Robust CORS configuration
+app.use(cors({
+  origin: true, // Auto-reflect request origin
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+  credentials: true,
+  optionsSuccessStatus: 204
+}));
 
 // Serve static resources like generated PDFs
 import path from 'path';
