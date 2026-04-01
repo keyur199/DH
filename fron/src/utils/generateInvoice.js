@@ -181,6 +181,10 @@ export const sendWhatsApp = async (invoice) => {
    const fileName = `DH_INV_${displayId}.pdf`;
    const pdfFile = new File([pdfBlob], fileName, { type: "application/pdf" });
 
+   // AUTO-DOWNLOAD: Trigger a local download immediately as requested
+   console.log("📥 Auto-downloading PDF for manual sharing...");
+   doc.save(fileName);
+
    // 1. TRY NATIVE SHARE ONLY ON MOBILE
    if (isMobile && navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
       try {
