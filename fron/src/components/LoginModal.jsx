@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { logoBase64 } from "../utils/logoData";
 
-const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8000/api";
+const API_BASE ="https://dh-roan.vercel.app/api";
 
 function LoginModal({ onLogin }) {
     const [isSignUp, setIsSignUp] = useState(false);

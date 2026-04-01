@@ -38,13 +38,22 @@ app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-// Database connection
-mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://keyurd846_db_user:Keyur%401905@dh.po1nnaw.mongodb.net/DH')
+// Database connection configuration
+const connectionOptions = {
+  bufferCommands: false, // Disable buffering to fail fast if not connected
+  autoIndex: true,
+};
+
+mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://keyurd846_db_user:Keyur%401905@dh.po1nnaw.mongodb.net/DH', connectionOptions)
   .then(() => {
-    console.log('Connected to MongoDB');
+    console.log('✅ Successfully connected to MongoDB Atlas');
   })
   .catch((error) => {
-    console.error('Error connecting to MongoDB:', error);
+    console.error('❌ MongoDB Connection Error:', {
+      message: error.message,
+      code: error.code,
+      hostname: error.hostname
+    });
   });
 
 // Conditionally start the server for local development
