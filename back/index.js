@@ -29,6 +29,32 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
+// Database connection middleware for Serverless environment
+const connectDB = async (req, res, next) => {
+  if (mongoose.connection.readyState >= 1) {
+    return next();
+  }
+
+  try {
+    console.log('🔄 Connecting to MongoDB Atlas...');
+    await mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://keyurd846_db_user:Keyur%401905@dh.po1nnaw.mongodb.net/DH', {
+      bufferCommands: false
+    });
+    console.log('✅ Successfully connected to MongoDB Atlas');
+    next();
+  } catch (error) {
+    console.error('❌ MongoDB Connection Error:', error.message);
+    res.status(503).json({
+      success: false,
+      message: "Database connection failed. Please try again in a few seconds.",
+      error: error.message
+    });
+  }
+};
+
+// Apply connection check to all API routes
+app.use(connectDB);
+
 // Routes
 import userRoutes from './routes/indexRoutes.js';
 app.use('/api/', userRoutes);
@@ -38,26 +64,8 @@ app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-// Database connection configuration
-const connectionOptions = {
-  bufferCommands: false, // Disable buffering to fail fast if not connected
-  autoIndex: true,
-};
-
-mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://keyurd846_db_user:Keyur%401905@dh.po1nnaw.mongodb.net/DH', connectionOptions)
-  .then(() => {
-    console.log('✅ Successfully connected to MongoDB Atlas');
-  })
-  .catch((error) => {
-    console.error('❌ MongoDB Connection Error:', {
-      message: error.message,
-      code: error.code,
-      hostname: error.hostname
-    });
-  });
-
 // Conditionally start the server for local development
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
   app.listen(port, () => {
     console.log(`Server is running locally on port ${port}`);
   });
