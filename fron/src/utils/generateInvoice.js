@@ -11,7 +11,6 @@ export const generateInvoice = (customer, mobile, items) => {
    localStorage.setItem("invoiceNumber", newInvoice);
    const invoiceId = String(newInvoice).padStart(2, "0");
 
-   // Map items to services for backend compatibility
    const backendServices = items.map(item => ({
       name: item.name,
       quantity: Number(item.qty),
@@ -23,18 +22,16 @@ export const generateInvoice = (customer, mobile, items) => {
    return {
       id: invoiceId,
       customerName: customer,
-      mobile: mobile, // Keep for legacy/PDF
-      mobileNumber: mobile, // For backend
+      mobileNumber: mobile, 
       date: new Date().toLocaleDateString('en-GB'),
-      items: items, // Keep for legacy/PDF
-      services: backendServices, // For backend
+      services: backendServices, 
       total: subtotal,
       createdAt: new Date().toISOString()
    };
 };
 
 /* =========================
-   MASTER TIER PDF GENERATION (EK J ROW MA FIX)
+   MASTER TIER PDF GENERATION
 ========================= */
 
 const showStatusToast = (title, body) => {
@@ -73,17 +70,14 @@ const getCircularLogo = async () => {
 
 export const downloadPDF = async (invoice, shouldSave = true) => {
    const doc = new jsPDF();
-   const total = invoice.totalAmount || invoice.total || 0;
    const circLogo = await getCircularLogo();
 
    doc.setFillColor(255, 255, 255); doc.rect(0, 0, 210, 297, "F");
-
    if (circLogo) {
       doc.setGState(new doc.GState({ opacity: 0.04 }));
       doc.addImage(circLogo, 'PNG', 55, 100, 100, 100);
       doc.setGState(new doc.GState({ opacity: 1 }));
    }
-
    doc.setFillColor(15, 15, 15); doc.rect(0, 0, 210, 42, "F");
    doc.setFillColor(255, 255, 255); doc.rect(0, 42, 210, 10, "F");
    doc.setFillColor(15, 15, 15); doc.rect(0, 52, 210, 18, "F");
@@ -95,7 +89,6 @@ export const downloadPDF = async (invoice, shouldSave = true) => {
 
    doc.setFont("helvetica", "bold"); doc.setTextColor(255, 255, 255); doc.setFontSize(19);
    doc.text("DH MAKEUP STUDIO & ACADEMY", 50, 23);
-
    doc.setFont("helvetica", "bold"); doc.setFontSize(7.5); doc.setTextColor(15, 15, 15);
    doc.text("Make Up  |  Hair Style  |  Hair Removal  |  Skin Treatment  |  All Beauty Care", 105, 48, { align: "center" });
 
@@ -108,7 +101,7 @@ export const downloadPDF = async (invoice, shouldSave = true) => {
    doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(60, 60, 60);
    doc.text("+91 " + (invoice.mobileNumber || invoice.mobile || ""), 20, 93);
 
-   const displayDate = invoice.date || (invoice.createdAt ? new Date(invoice.createdAt).toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB'));
+   const displayDate = invoice.date || new Date().toLocaleDateString('en-GB');
    const displayId = (invoice.invoiceId || (invoice.id ? String(invoice.id) : (invoice._id ? invoice._id.toString().slice(-2).toUpperCase() : "01"))).replace("INV-", "").padStart(2, "0");
 
    doc.setFontSize(9); doc.text("Date : " + displayDate, 185, 85, { align: "right" });
@@ -120,114 +113,92 @@ export const downloadPDF = async (invoice, shouldSave = true) => {
    doc.text("Description", 25, y + 6.5); doc.text("Qty.", 115, y + 6.5, { align: "center" });
    doc.text("Price", 145, y + 6.5, { align: "center" }); doc.text("Total", 175, y + 6.5, { align: "center" });
 
-   y += 10;
-   doc.setFont("helvetica", "normal");
+   y += 10; doc.setFont("helvetica", "normal");
    const itemsToRender = invoice.services || invoice.items || [];
    itemsToRender.forEach((item, idx) => {
-      const q = item.quantity || item.qty || 1;
-      const p = item.price || 0;
-      const rowTotal = q * p;
+      const q = item.quantity || item.qty || 1; const p = item.price || 0;
       if (idx % 2 !== 0) { doc.setFillColor(248, 248, 248); doc.rect(20, y, 170, 10, "F"); }
       doc.setTextColor(40, 40, 40); doc.text(item.name || "Service", 25, y + 6.5);
       doc.text(String(q), 115, y + 6.5, { align: "center" });
       doc.text("Rs. " + Number(p).toFixed(2), 145, y + 6.5, { align: "center" });
-      doc.setFont("helvetica", "bold"); doc.text("Rs. " + Number(rowTotal).toFixed(2), 175, y + 6.5, { align: "center" });
+      doc.setFont("helvetica", "bold"); doc.text("Rs. " + (q * p).toFixed(2), 175, y + 6.5, { align: "center" });
       doc.setFont("helvetica", "normal"); y += 10;
    });
 
    doc.setDrawColor(25, 25, 25); doc.setLineWidth(0.5); doc.rect(20, 110, 170, y - 110, "S");
-
    y += 15;
    doc.setFontSize(10); doc.setFont("helvetica", "bold"); doc.setTextColor(60, 60, 60);
    doc.text("Sub-total :", 150, y, { align: "right" });
    doc.setTextColor(20, 20, 20); doc.text("Rs. " + (invoice.totalAmount || invoice.total || 0).toFixed(2), 185, y, { align: "right" });
-
    doc.setFillColor(15, 15, 15); doc.rect(130, y + 10, 60, 12, "F");
-   doc.setFontSize(12); doc.setTextColor(255, 255, 255);
-   doc.text("Total :", 150, y + 18, { align: "right" });
+   doc.setFontSize(12); doc.setTextColor(255, 255, 255); doc.text("Total :", 150, y + 18, { align: "right" });
    doc.text("Rs. " + (invoice.totalAmount || invoice.total || 0).toFixed(2), 185, y + 18, { align: "right" });
 
    const bottomY = 275;
-   doc.setDrawColor(180, 180, 180); doc.setLineWidth(0.3);
-   doc.line(135, bottomY - 7, 185, bottomY - 7);
-
    doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(20, 20, 20);
    doc.text("DH MAKEUP STUDIO & ACADEMY", 160, bottomY, { align: "center" });
-   doc.setFont("helvetica", "italic"); doc.setFontSize(7.5); doc.setTextColor(120, 120, 120);
-   doc.text("Authorized Signatory", 160, bottomY + 6, { align: "center" });
-
    doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(80, 80, 80);
-   doc.text("Thank you for visiting DH Makeup Studio & Academy. We hope to see you again!", 105, bottomY + 15, { align: "center" });
+   doc.text("Thank you for visiting DH Makeup Studio & Academy!", 105, bottomY + 15, { align: "center" });
 
-   if (shouldSave) {
-      doc.save("Invoice-" + displayId + ".pdf");
-   }
+   if (shouldSave) { doc.save(`Invoice_${displayId}.pdf`); }
    return doc;
 };
 
 /* =========================
-   SHARE LOGIC
-========================= */const isMobileDevice = () => /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+   SHARE LOGIC (VANGUARD ULTIMATE)
+========================= */
+
+const isMobileDevice = () => /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
 export const sendWhatsApp = async (invoice) => {
    const displayId = (invoice.invoiceId || (invoice.id ? String(invoice.id) : (invoice._id ? invoice._id.toString().slice(-2).toUpperCase() : "01"))).replace("INV-", "").padStart(2, "0");
    const isMobile = isMobileDevice();
    
-   console.log("🚀 WhatsApp Share Triggered. Device:", isMobile ? "Mobile" : "Desktop");
-   showStatusToast("WhatsApp Sharing...", "Preparing your professional invoice link.");
+   showStatusToast("Propar Share...", "Sending your direct PDF document.");
 
    const doc = await downloadPDF(invoice, false);
    const pdfBlob = doc.output('blob');
-   const fileName = `DH_INV_${displayId}.pdf`;
+   const fileName = `DH_Studio_Invoice_${displayId}.pdf`;
    const pdfFile = new File([pdfBlob], fileName, { type: "application/pdf" });
 
-   // AUTO-DOWNLOAD: Trigger a local download immediately as requested
-   console.log("📥 Auto-downloading PDF for manual sharing...");
-   doc.save(fileName);
-
-   // 1. TRY NATIVE SHARE ONLY ON MOBILE
+   // 1. MOBILE NATIVE (Direct PDF Attachment)
    if (isMobile && navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
       try {
          await navigator.share({
             files: [pdfFile],
             title: `Invoice ${displayId}`,
-            text: `🧾 *DH MAKEUP STUDIO*\n\nInvoice for *${invoice.customerName || "Customer"}*\nTotal: ₹${invoice.totalAmount || invoice.total || 0}`
+            text: `💎 *DH MAKEUP STUDIO*\n\nInvoice for *${invoice.customerName || "Customer"}* is attached.`
          });
          return; 
       } catch (err) {
          if (err.name === 'AbortError') return;
-         console.error("Native share failed", err);
       }
    }
 
-   // 2. DESKTOP OR MOBILE FALLBACK: Upload to Server
+   // 2. DESKTOP / FALLBACK (PROPER)
    const apiBase = process.env.REACT_APP_API_BASE || "http://localhost:8000/api";
    const phoneRaw = String(invoice.mobileNumber || invoice.mobile || "").replace(/\D/g, "");
-   const phone = phoneRaw.length === 10 ? "91" + phoneRaw : phoneRaw;
-   const messageTemplate = `🧾 *DH MAKEUP STUDIO & ACADEMY*\n\nYour *Invoice INV-${displayId}* for *${invoice.customerName || "Customer"}* is ready!\n\nTotal: ₹${invoice.totalAmount || invoice.total || 0}\n\n`;
+   const phone = (phoneRaw.length === 10) ? "91" + phoneRaw : phoneRaw;
 
    try {
-      showStatusToast("Sharing...", "Generating direct WhatsApp message.");
       const pdfBase64 = doc.output('datauristring').split(',')[1];
       const response = await fetch(`${apiBase}/upload-invoice`, {
          method: "POST",
          headers: { "Content-Type": "application/json" },
          body: JSON.stringify({ pdfBase64, invoiceId: displayId })
       });
-      
       const data = await response.json();
-      if (response.ok && data.url) {
-         const finalMessage = messageTemplate + `📥 *VIEW & DOWNLOAD:* \n${data.url}`;
-         window.open(`https://wa.me/${phone}?text=${encodeURIComponent(finalMessage)}`, '_blank');
-         return; // SUCCESS with link
-      } else {
-         console.warn("⚠️ Server upload not available, falling back to text-only.");
+      if (data.success && data.url) {
+         const directLinkMsg = `💎 *DH MAKEUP STUDIO*\n\nInvoice *INV-${displayId}* for *${invoice.customerName || "Customer"}* is ready!\n\n📥 *DIRECT DOWNLOAD PDF:* \n${data.url}\n\n📥 **PDF SENT DIRECTLY:** (Local copy saved). \n⚠️ Please attach the PDF now to this chat.`;
+         window.open(`https://wa.me/${phone}?text=${encodeURIComponent(directLinkMsg)}`, '_blank');
+         return;
       }
    } catch (err) {
-      console.warn("⚠️ Connection failed, sending text-only fallback.", err);
+      console.warn("Upload failed", err);
    }
 
-   // 3. LAST RESORT: Just open WhatsApp with message (Reliable & Works everywhere)
-   const fallbackUrl = `https://wa.me/${phone}?text=${encodeURIComponent(messageTemplate + "Please check your email/manual download for the PDF copy.")}`;
-   window.open(fallbackUrl, '_blank');
+   // 3. DIAMOND MASTER FALLBACK (PROPER)
+   doc.save(fileName); 
+   const masterMsg = `💎 *DH MAKEUP STUDIO*\n\nInvoice *INV-${displayId}* for *${invoice.customerName || "Customer"}* is ready!\n\n📥 **PDF SENT DIRECTLY:** (Local copy saved). \n⚠️ Please attach the PDF now to this chat.`;
+   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(masterMsg)}`, '_blank');
 };

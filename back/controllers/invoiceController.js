@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import Invoice from "../models/invoiceModel.js";
 import { ThrowError } from "../utils/ErrorUtils.js";
 import { sendSuccessResponse, sendErrorResponse, sendBadRequestResponse, sendCreatedResponse } from '../utils/ResponseUtils.js';
@@ -122,6 +123,11 @@ export const updateInvoice = async (req, res) => {
         if (mobileNumber) existingInvoice.mobileNumber = mobileNumber;
         existingInvoice.totalAmount = totalAmount;
 
+        // 3. DIAMOND MASTER FALLBACK (PROPER)
+        // doc.save(fileName); 
+        // const masterMsg = `💎 *DH MAKEUP STUDIO*\n\nInvoice *INV-${displayId}* for *${invoice.customerName || "Customer"}* is ready!\n\n📥 **PDF SENT DIRECTLY:** (Local copy saved). \n⚠️ Please attach the PDF now to this chat.`;
+        // window.open(`https://wa.me/${phone}?text=${encodeURIComponent(masterMsg)}`, '_blank');
+
         await existingInvoice.save();
 
         return sendSuccessResponse(res, "Invoice updated successfully", existingInvoice);
@@ -148,18 +154,15 @@ export const deleteInvoice = async (req, res) => {
 };
 
 export const uploadInvoice = async (req, res) => {
-    // VERCEL CHECK: Vercel functions are read-only. We skip this step.
-    if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
-        return res.json({ success: false, message: "Server is read-only (Vercel). Using text-only sharing fallback." });
-    }
-
     try {
         const { pdfBase64, invoiceId } = req.body;
         if (!pdfBase64) return res.status(400).json({ success: false, message: "No PDF data provided" });
 
-        const fileName = `luxury_invoice_${invoiceId || Date.now()}.pdf`;
-        const publicPath = path.join(process.cwd(), 'public', 'invoices');
-        
+        const fileName = `Proper_Invoice_${invoiceId || Date.now()}.pdf`;
+        const __filename = fileURLToPath(import.meta.url);
+        const __dirname = path.dirname(__filename);
+        const publicPath = path.join(__dirname, '..', 'public', 'invoices');
+
         try {
             if (!fs.existsSync(publicPath)) {
                 fs.mkdirSync(publicPath, { recursive: true });
@@ -167,7 +170,7 @@ export const uploadInvoice = async (req, res) => {
             const filePath = path.join(publicPath, fileName);
             const buffer = Buffer.from(pdfBase64, 'base64');
             fs.writeFileSync(filePath, buffer);
-            
+
             // Construct server URL
             const protocol = req.protocol;
             const host = req.get('host');

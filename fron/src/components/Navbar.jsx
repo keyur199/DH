@@ -1,9 +1,14 @@
 import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { logoBase64 } from "../utils/logoData";
 import { IconMenu, IconX } from "./Icons";
 
-function Navbar({ setPage, page, theme, setTheme, setIsAuthenticated, userName }) {
+function Navbar({ theme, setTheme, setIsAuthenticated, userName }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const page = location.pathname.replace("/", "") || "dashboard";
 
     const handleLogout = () => {
         sessionStorage.clear();
@@ -12,7 +17,7 @@ function Navbar({ setPage, page, theme, setTheme, setIsAuthenticated, userName }
     };
 
     const navigateTo = (p) => {
-        setPage(p);
+        navigate(`/${p}`);
         setIsMenuOpen(false);
     };
 

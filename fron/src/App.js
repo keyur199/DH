@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Billing from "./components/Billing";
 import Dashboard from "./components/Dashboard";
 import InvoiceHistory from "./components/InvoiceHistory";
@@ -21,7 +22,6 @@ function App() {
     return isAuth;
   });
 
-  const [page, setPage] = useState("dashboard");
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("app-theme") || "theme-gold";
   });
@@ -98,64 +98,52 @@ function App() {
 
   return (
 
-    <div className={`app ${theme}`}>
+    <Router>
 
-      <Navbar
-        setPage={setPage}
-        page={page}
-        theme={theme}
-        setTheme={setTheme}
-        setIsAuthenticated={setIsAuthenticated}
-        userName={userName}
-      />
+      <div className={`app ${theme}`}>
 
-      <div className="main">
+        <Navbar
+          theme={theme}
+          setTheme={setTheme}
+          setIsAuthenticated={setIsAuthenticated}
+          userName={userName}
+        />
 
-        {page === "dashboard" && (
-          <Dashboard invoices={invoices} customers={customers} />
-        )}
+        <div className="main">
 
-        {page === "billing" && (
-          <Billing
-            setInvoices={setInvoices}
-            setCustomers={setCustomers}
-            services={services}
-            setServices={setServices}
-          />
-        )}
+          <Routes>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<Dashboard invoices={invoices} customers={customers} />} />
+            <Route path="/billing" element={
+              <Billing
+                setInvoices={setInvoices}
+                setCustomers={setCustomers}
+                services={services}
+                setServices={setServices}
+              />
+            } />
+            <Route path="/appointments" element={
+              <Appointments
+                appointments={appointments}
+                setAppointments={setAppointments}
+                setInvoices={setInvoices}
+                setCustomers={setCustomers}
+                services={services}
+                setServices={setServices}
+              />
+            } />
+            <Route path="/services" element={<Services services={services} setServices={setServices} />} />
+            <Route path="/history" element={<InvoiceHistory invoices={invoices} setInvoices={setInvoices} />} />
+            <Route path="/customers" element={<Customers invoices={invoices} />} />
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
 
-        {page === "appointments" && (
-          <Appointments
-            appointments={appointments}
-            setAppointments={setAppointments}
-            setInvoices={setInvoices}
-            setCustomers={setCustomers}
-            services={services}
-            setServices={setServices}
-          />
-        )}
-
-        {page === "services" && (
-          <Services
-            services={services}
-            setServices={setServices}
-          />
-        )}
-
-        {page === "history" && (
-          <InvoiceHistory
-            invoices={invoices}
-            setInvoices={setInvoices}
-          />
-        )}
-
-        {page === "customers" && (
-          <Customers invoices={invoices} />
-        )}
+        </div>
 
       </div>
 
-    </div>
+    </Router>
 
   );
 

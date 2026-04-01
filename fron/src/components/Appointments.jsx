@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { generateInvoice } from "../utils/generateInvoice";
 import CustomDropdown from "./CustomDropdown";
 import { apiRequest } from "../utils/api";
-import { IconClipboard, IconEdit, IconTrash } from "./Icons";
+import { IconClipboard, IconEdit, IconTrash, IconWhatsApp } from "./Icons";
+import { sendWhatsApp } from "../utils/generateInvoice";
 
 function Appointments({
   appointments,
@@ -467,6 +468,15 @@ function Appointments({
                         >
                           <IconTrash size={18} color="#fb7185" />
                         </button>
+                        {a.status === "Completed" && (
+                          <button
+                            className="action-btn whatsapp"
+                            title="Send WhatsApp Invoice"
+                            onClick={() => sendWhatsApp(a)}
+                          >
+                            <IconWhatsApp size={18} color="#4ade80" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
