@@ -1,4 +1,4 @@
-const API_BASE = process.env.API_BASE || "http://localhost:8000/api";
+const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8000/api";
 
 const getHeaders = () => {
     const token = sessionStorage.getItem("token");

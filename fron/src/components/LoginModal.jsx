@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { logoBase64 } from "../utils/logoData";
 
-const API_BASE = process.env.API_BASE || "http://localhost:8000/api";
+const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8000/api";
 
 function LoginModal({ onLogin }) {
     const [isSignUp, setIsSignUp] = useState(false);
     const [isForgot, setIsForgot] = useState(false);
-    
+
     // Recovery states
     const [recoveryStep, setRecoveryStep] = useState(1);
     const [securityAnswer, setSecurityAnswer] = useState("");
@@ -22,8 +22,8 @@ function LoginModal({ onLogin }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
-        
-        const cleanInput = email.trim().toLowerCase(); 
+
+        const cleanInput = email.trim().toLowerCase();
         const cleanPassword = password.trim();
 
         if (isForgot) {
@@ -142,8 +142,8 @@ function LoginModal({ onLogin }) {
             {/* Right Gateway Panel */}
             <div className="v6-gate-panel">
                 {/* Flowing Watermark Background */}
-                <div 
-                    className="v6-gate-watermark" 
+                <div
+                    className="v6-gate-watermark"
                     style={{ backgroundImage: `url(${logoBase64})` }}
                 ></div>
 
@@ -190,8 +190,8 @@ function LoginModal({ onLogin }) {
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                         />
-                                        <button 
-                                            type="button" 
+                                        <button
+                                            type="button"
                                             className="v6-redux-eye"
                                             onClick={() => setShowPassword(!showPassword)}
                                         >

@@ -10,7 +10,7 @@ export const generateInvoice = (customer, mobile, items) => {
    let newInvoice = Number(lastInvoice) + 1;
    localStorage.setItem("invoiceNumber", newInvoice);
    const invoiceId = String(newInvoice).padStart(2, "0");
-   
+
    // Map items to services for backend compatibility
    const backendServices = items.map(item => ({
       name: item.name,
@@ -19,7 +19,7 @@ export const generateInvoice = (customer, mobile, items) => {
    }));
 
    const subtotal = items.reduce((sum, item) => sum + (item.qty * item.price), 0);
-   
+
    return {
       id: invoiceId,
       customerName: customer,
@@ -52,23 +52,23 @@ const showStatusToast = (title, body) => {
 }
 
 const getCircularLogo = async () => {
-    if (!logoBase64) return null;
-    return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-            const canvas = document.createElement("canvas");
-            canvas.width = 512; canvas.height = 512;
-            const ctx = canvas.getContext("2d");
-            ctx.beginPath(); ctx.arc(256, 256, 256, 0, Math.PI * 2); ctx.closePath(); ctx.clip();
-            ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, 512, 512);
-            const minSize = Math.min(img.width, img.height);
-            const sx = (img.width - minSize) / 2; const sy = (img.height - minSize) / 2;
-            ctx.drawImage(img, sx, sy, minSize, minSize, 0, 0, 512, 512);
-            resolve(canvas.toDataURL("image/png"));
-        };
-        img.onerror = () => resolve(null);
-        img.src = logoBase64;
-    });
+   if (!logoBase64) return null;
+   return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+         const canvas = document.createElement("canvas");
+         canvas.width = 512; canvas.height = 512;
+         const ctx = canvas.getContext("2d");
+         ctx.beginPath(); ctx.arc(256, 256, 256, 0, Math.PI * 2); ctx.closePath(); ctx.clip();
+         ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, 512, 512);
+         const minSize = Math.min(img.width, img.height);
+         const sx = (img.width - minSize) / 2; const sy = (img.height - minSize) / 2;
+         ctx.drawImage(img, sx, sy, minSize, minSize, 0, 0, 512, 512);
+         resolve(canvas.toDataURL("image/png"));
+      };
+      img.onerror = () => resolve(null);
+      img.src = logoBase64;
+   });
 };
 
 export const downloadPDF = async (invoice, shouldSave = true) => {
@@ -96,18 +96,18 @@ export const downloadPDF = async (invoice, shouldSave = true) => {
    doc.setFont("helvetica", "bold"); doc.setTextColor(255, 255, 255); doc.setFontSize(19);
    doc.text("DH MAKEUP STUDIO & ACADEMY", 50, 23);
 
-   doc.setFont("helvetica", "bold"); doc.setFontSize(7.5); doc.setTextColor(15, 15, 15); 
+   doc.setFont("helvetica", "bold"); doc.setFontSize(7.5); doc.setTextColor(15, 15, 15);
    doc.text("Make Up  |  Hair Style  |  Hair Removal  |  Skin Treatment  |  All Beauty Care", 105, 48, { align: "center" });
 
    doc.setFont("helvetica", "normal"); doc.setFontSize(8.5); doc.setTextColor(255, 255, 255);
    doc.text("H-101, First Floor, Shivant Iconic, Outer Ringroad, Valak, Surat. | +91 95373 87311", 105, 59, { align: "center" });
    doc.text("Instagram: dh_makeup_studio_", 105, 65, { align: "center" });
 
-   doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.setTextColor(40, 40, 40); 
+   doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.setTextColor(40, 40, 40);
    doc.text((invoice.customerName || "Customer").toUpperCase(), 20, 85);
    doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(60, 60, 60);
    doc.text("+91 " + (invoice.mobileNumber || invoice.mobile || ""), 20, 93);
-   
+
    const displayDate = invoice.date || (invoice.createdAt ? new Date(invoice.createdAt).toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB'));
    const displayId = (invoice.invoiceId || (invoice.id ? String(invoice.id) : (invoice._id ? invoice._id.toString().slice(-2).toUpperCase() : "01"))).replace("INV-", "").padStart(2, "0");
 
@@ -116,7 +116,7 @@ export const downloadPDF = async (invoice, shouldSave = true) => {
 
    let y = 110;
    doc.setFillColor(25, 25, 25); doc.rect(20, y, 170, 10, "F");
-   doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(255, 255, 255); 
+   doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(255, 255, 255);
    doc.text("Description", 25, y + 6.5); doc.text("Qty.", 115, y + 6.5, { align: "center" });
    doc.text("Price", 145, y + 6.5, { align: "center" }); doc.text("Total", 175, y + 6.5, { align: "center" });
 
@@ -143,18 +143,18 @@ export const downloadPDF = async (invoice, shouldSave = true) => {
    doc.setTextColor(20, 20, 20); doc.text("Rs. " + (invoice.totalAmount || invoice.total || 0).toFixed(2), 185, y, { align: "right" });
 
    doc.setFillColor(15, 15, 15); doc.rect(130, y + 10, 60, 12, "F");
-   doc.setFontSize(12); doc.setTextColor(255, 255, 255); 
+   doc.setFontSize(12); doc.setTextColor(255, 255, 255);
    doc.text("Total :", 150, y + 18, { align: "right" });
    doc.text("Rs. " + (invoice.totalAmount || invoice.total || 0).toFixed(2), 185, y + 18, { align: "right" });
 
    const bottomY = 275;
-   doc.setDrawColor(180, 180, 180); doc.setLineWidth(0.3); 
-   doc.line(135, bottomY - 7, 185, bottomY - 7); 
+   doc.setDrawColor(180, 180, 180); doc.setLineWidth(0.3);
+   doc.line(135, bottomY - 7, 185, bottomY - 7);
 
    doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(20, 20, 20);
-   doc.text("DH MAKEUP STUDIO & ACADEMY", 160, bottomY, { align: "center" }); 
+   doc.text("DH MAKEUP STUDIO & ACADEMY", 160, bottomY, { align: "center" });
    doc.setFont("helvetica", "italic"); doc.setFontSize(7.5); doc.setTextColor(120, 120, 120);
-   doc.text("Authorized Signatory", 160, bottomY + 6, { align: "center" }); 
+   doc.text("Authorized Signatory", 160, bottomY + 6, { align: "center" });
 
    doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(80, 80, 80);
    doc.text("Thank you for visiting DH Makeup Studio & Academy. We hope to see you again!", 105, bottomY + 15, { align: "center" });
@@ -173,31 +173,31 @@ export const sendWhatsApp = async (invoice) => {
    showStatusToast("Propar Sharing...", "Generating your 'ek j row' luxury PDF for direct sharing.");
    const doc = await downloadPDF(invoice, false);
    const pdfBlob = doc.output('blob');
-   
+
    const displayId = (invoice.invoiceId || (invoice.id ? String(invoice.id) : (invoice._id ? invoice._id.toString().slice(-2).toUpperCase() : "01"))).replace("INV-", "").padStart(2, "0");
    const fileName = `DH_MAKEUP_STUDIO_INV_${displayId}.pdf`;
    const pdfFile = new File([pdfBlob], fileName, { type: "application/pdf" });
 
    if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-      try { 
-         await navigator.share({ 
-            files: [pdfFile], 
-            title: `Invoice ${displayId}`, 
-            text: `🧾 *DH MAKEUP STUDIO & ACADEMY*\n\nYour invoice for *${invoice.customerName || "Customer"}* is ready!\n\nTotal: ₹${invoice.totalAmount || invoice.total || 0}` 
-         }); 
-         return; 
-      } catch (err) {}
+      try {
+         await navigator.share({
+            files: [pdfFile],
+            title: `Invoice ${displayId}`,
+            text: `🧾 *DH MAKEUP STUDIO & ACADEMY*\n\nYour invoice for *${invoice.customerName || "Customer"}* is ready!\n\nTotal: ₹${invoice.totalAmount || invoice.total || 0}`
+         });
+         return;
+      } catch (err) { }
    }
 
    const pdfBase64 = doc.output('datauristring').split(',')[1];
    try {
-      const response = await fetch((process.env.API_BASE || "http://localhost:8000/api") + "/upload-invoice", { 
-         method: "POST", 
-         headers: { "Content-Type": "application/json" }, 
-         body: JSON.stringify({ pdfBase64, invoiceId: displayId }) 
+      const response = await fetch((process.env.REACT_APP_API_BASE || "http://localhost:8000/api") + "/upload-invoice", {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({ pdfBase64, invoiceId: displayId })
       });
       const data = await response.json();
       const url = "https://wa.me/91" + (invoice.mobileNumber || invoice.mobile || "") + "?text=" + encodeURIComponent(`🧾 *DH MAKEUP STUDIO & ACADEMY*\n\nYour *Invoice INV-${displayId}* is ready!\n\n📥 *VIEW & DOWNLOAD:* \n${data.url}`);
       window.open(url, '_blank');
-   } catch (err) {}
+   } catch (err) { }
 };
