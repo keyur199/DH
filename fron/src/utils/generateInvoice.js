@@ -191,7 +191,7 @@ export const sendWhatsApp = async (invoice) => {
 
    const pdfBase64 = doc.output('datauristring').split(',')[1];
    try {
-      const response = await fetch("http://localhost:8000/api/upload-invoice", { 
+      const response = await fetch((process.env.API_BASE || "http://localhost:8000/api") + "/upload-invoice", { 
          method: "POST", 
          headers: { "Content-Type": "application/json" }, 
          body: JSON.stringify({ pdfBase64, invoiceId: displayId }) 

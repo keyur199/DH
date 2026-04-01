@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import Invoice from "../models/invoiceModel.js";
 import { ThrowError } from "../utils/ErrorUtils.js";
 import { sendSuccessResponse, sendErrorResponse, sendBadRequestResponse, sendCreatedResponse } from '../utils/ResponseUtils.js';
@@ -134,5 +136,33 @@ export const deleteInvoice = async (req, res) => {
         return sendSuccessResponse(res, "Invoice deleted successfully");
     } catch (error) {
         return ThrowError(res, 500, error.message);
+    }
+};
+
+export const uploadInvoice = async (req, res) => {
+    try {
+        const { pdfBase64, invoiceId } = req.body;
+        if (!pdfBase64) return res.status(400).json({ success: false, message: "No PDF data provided" });
+
+        const fileName = `luxury_invoice_${invoiceId || Date.now()}.pdf`;
+        const publicPath = path.join(process.cwd(), 'public', 'invoices');
+        
+        if (!fs.existsSync(publicPath)) {
+            fs.mkdirSync(publicPath, { recursive: true });
+        }
+
+        const filePath = path.join(publicPath, fileName);
+        const buffer = Buffer.from(pdfBase64, 'base64');
+        fs.writeFileSync(filePath, buffer);
+
+        // Construct server URL
+        const protocol = req.protocol;
+        const host = req.get('host');
+        const url = `${protocol}://${host}/public/invoices/${fileName}`;
+
+        return res.json({ success: true, url });
+    } catch (error) {
+        console.error("Upload error:", error);
+        return res.status(500).json({ success: false, message: error.message });
     }
 };

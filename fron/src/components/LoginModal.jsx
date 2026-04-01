@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { logoBase64 } from "../utils/logoData";
 
-const API_BASE = "http://localhost:8000/api";
+const API_BASE = process.env.API_BASE || "http://localhost:8000/api";
 
 function LoginModal({ onLogin }) {
     const [isSignUp, setIsSignUp] = useState(false);

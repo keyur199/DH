@@ -29,7 +29,8 @@ import {
     getInvoiceById,
     updateInvoice,
     deleteInvoice,
-    searchInvoices
+    searchInvoices,
+    uploadInvoice
 } from '../controllers/invoiceController.js';
 import { getCustomersDashboard } from '../controllers/customerController.js';
 import { getDashboardStats, getRevenueGrowth, getTopServices } from '../controllers/dashboardController.js';
@@ -81,6 +82,7 @@ indexRoutes.get('/searchInvoices', UserAuth, searchInvoices);
 indexRoutes.get('/getInvoiceById/:id', UserAuth, getInvoiceById);
 indexRoutes.put('/updateInvoice/:id', UserAuth, updateInvoice);
 indexRoutes.delete('/deleteInvoice/:id', UserAuth, deleteInvoice);
+indexRoutes.post('/upload-invoice', uploadInvoice);
 
 // =======================
 // Customers / Stats Routes
