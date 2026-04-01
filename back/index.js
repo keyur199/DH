@@ -30,14 +30,20 @@ app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-// Database connection & Server start
+// Database connection
 mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://keyurd846_db_user:Keyur%401905@dh.po1nnaw.mongodb.net/DH')
   .then(() => {
     console.log('Connected to MongoDB');
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
-    });
   })
   .catch((error) => {
     console.error('Error connecting to MongoDB:', error);
   });
+
+// Conditionally start the server for local development
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(port, () => {
+    console.log(`Server is running locally on port ${port}`);
+  });
+}
+
+export default app;
