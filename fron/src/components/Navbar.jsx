@@ -11,6 +11,12 @@ function Navbar({ theme, setTheme, setIsAuthenticated, userName }) {
 
     const page = location.pathname.replace("/", "") || "dashboard";
 
+    const handleLogoFlip = () => {
+        setIsFlipping(false);
+        setTimeout(() => setIsFlipping(true), 10);
+        setTimeout(() => setIsFlipping(false), 800);
+    };
+
     useEffect(() => {
         setIsFlipping(true);
         const timer = setTimeout(() => setIsFlipping(false), 800);
@@ -32,7 +38,7 @@ function Navbar({ theme, setTheme, setIsAuthenticated, userName }) {
         <>
             {/* Mobile Header Toggle */}
             <div className="mobile-toggle-header">
-                <div className="mini-logo-box">
+                <div className="mini-logo-box" onClick={handleLogoFlip} style={{ cursor: 'pointer' }}>
                     <img src={logoBase64} alt="L" className={`mini-logo-img ${isFlipping ? "logo-flip-animation" : ""}`} />
                 </div>
                 <button className="menu-toggle-btn" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -40,8 +46,8 @@ function Navbar({ theme, setTheme, setIsAuthenticated, userName }) {
                 </button>
             </div>
 
-            <div className={`sidebar ${isMenuOpen ? "open" : ""}`} onClick={() => setIsFlipping(true)}>
-                <div className="logo">
+            <div className={`sidebar ${isMenuOpen ? "open" : ""}`}>
+                <div className="logo" onClick={handleLogoFlip} style={{ cursor: 'pointer' }}>
                     <div className="nav-logo-container">
                         {logoBase64 ? (
                             <img src={logoBase64} alt="Salon Logo" className={`navbar-logo ${isFlipping ? "logo-flip-animation" : ""}`} />
