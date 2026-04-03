@@ -18,6 +18,7 @@ function Appointments({
   const [mobile, setMobile] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("Cash");
 
   const [serviceList, setServiceList] = useState([
     { name: "", price: "" }
@@ -95,7 +96,8 @@ function Appointments({
         date,
         time,
         services: formattedServices,
-        status: "Pending"
+        status: "Pending",
+        paymentMethod: paymentMethod
       });
 
       if (res.success) {
@@ -124,7 +126,8 @@ function Appointments({
         mobileNumber: appnt.mobileNumber,
         services: appnt.services,
         date: appnt.date, // Pass the scheduled date
-        appointmentId: id
+        appointmentId: id,
+        paymentMethod: appnt.paymentMethod || "Cash"
       };
       const invRes = await apiRequest("/createInvoice", "POST", invoiceData);
       if (invRes.success) {
@@ -219,6 +222,7 @@ function Appointments({
   const [editMobile, setEditMobile] = useState("");
   const [editDate, setEditDate] = useState("");
   const [editTime, setEditTime] = useState("");
+  const [editPaymentMethod, setEditPaymentMethod] = useState("Cash");
   const [editServices, setEditServices] = useState([]);
 
   const triggerEditModal = (a) => {
@@ -227,6 +231,7 @@ function Appointments({
     setEditMobile(a.mobileNumber);
     setEditDate(a.date);
     setEditTime(a.time);
+    setEditPaymentMethod(a.paymentMethod || "Cash");
     // Deep clone to avoid direct state mutation
     setEditServices(a.services ? a.services.map(s => ({ ...s })) : []);
     setShowEditModal(true);
@@ -250,6 +255,7 @@ function Appointments({
         mobileNumber: editMobile,
         date: editDate,
         time: editTime,
+        paymentMethod: editPaymentMethod,
         services: formattedServices
       });
       if (res.success) {
@@ -290,6 +296,15 @@ function Appointments({
             value={time}
             onChange={(e) => setTime(e.target.value)}
           />
+          <select 
+            value={paymentMethod} 
+            onChange={(e) => setPaymentMethod(e.target.value)}
+            className="boutique-input"
+            style={{ appearance: 'none', background: 'rgba(255,255,255,0.02)', color: 'white' }}
+          >
+            <option value="Cash" style={{ background: '#1a1a1a' }}>💵 Cash</option>
+            <option value="Online" style={{ background: '#1a1a1a' }}>💳 Online</option>
+          </select>
         </div>
 
         <div className="services-section">
@@ -585,6 +600,18 @@ function Appointments({
                     value={editTime}
                     onChange={(e) => setEditTime(e.target.value)}
                   />
+                </div>
+                <div className="form-group-boutique flex-1">
+                  <label className="boutique-label">PAYMENT METHOD</label>
+                  <select 
+                    className="boutique-input"
+                    value={editPaymentMethod} 
+                    onChange={(e) => setEditPaymentMethod(e.target.value)}
+                    style={{ appearance: 'none', background: 'rgba(255,255,255,0.02)', color: 'white' }}
+                  >
+                    <option value="Cash" style={{ background: '#1a1a1a' }}>💵 Cash</option>
+                    <option value="Online" style={{ background: '#1a1a1a' }}>💳 Online</option>
+                  </select>
                 </div>
               </div>
             </div>

@@ -13,6 +13,7 @@ const invoiceSchema = mongoose.Schema({
     totalAmount: { type: Number, default: 0 },
     date: { type: String, required: true },
     invoiceId: { type: String, unique: true },
+    paymentMethod: { type: String, enum: ["Cash", "Online"], default: "Cash" },
     appointmentId: { type: mongoose.Schema.Types.ObjectId, ref: "Appointment", default: null },
     pdfUrl: { type: String, default: null }
 }, { timestamps: true });

@@ -5,7 +5,7 @@ import { sendSuccessResponse, sendErrorResponse, sendBadRequestResponse, sendCre
 
 export const createAppointment = async (req, res) => {
     try {
-        const { customerName, mobileNumber, date, time, services, status } = req.body;
+        const { customerName, mobileNumber, date, time, services, status, paymentMethod } = req.body;
 
         if (!customerName || !mobileNumber || !date || !time || !services || services.length === 0) {
             return sendBadRequestResponse(res, "Customer Name, Mobile Number, Date, Time, and at least one Service are required");
@@ -23,7 +23,8 @@ export const createAppointment = async (req, res) => {
             time,
             services,
             totalAmount,
-            status: status || 'Pending'
+            status: status || 'Pending',
+            paymentMethod: paymentMethod || 'Cash'
         });
 
         return sendCreatedResponse(res, "Appointment created successfully", newAppointment);
@@ -64,7 +65,7 @@ export const getAppointmentById = async (req, res) => {
 export const updateAppointment = async (req, res) => {
     try {
         const { id } = req.params;
-        const { customerName, mobileNumber, date, time, services, status } = req.body;
+        const { customerName, mobileNumber, date, time, services, status, paymentMethod } = req.body;
 
         const existingAppointment = await Appointment.findById(id);
         if (!existingAppointment) {
@@ -85,6 +86,7 @@ export const updateAppointment = async (req, res) => {
         if (date) existingAppointment.date = date;
         if (time) existingAppointment.time = time;
         if (status) existingAppointment.status = status;
+        if (paymentMethod) existingAppointment.paymentMethod = paymentMethod;
         existingAppointment.totalAmount = totalAmount;
 
         await existingAppointment.save();

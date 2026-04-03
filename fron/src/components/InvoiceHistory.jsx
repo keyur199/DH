@@ -100,6 +100,7 @@ function InvoiceHistory({ invoices, setInvoices }) {
                             <th style={{ width: '20%', textAlign: 'center' }}>CUSTOMER</th>
                             <th style={{ width: '12%', textAlign: 'center' }}>MOBILE</th>
                             <th style={{ width: '22%', textAlign: 'center' }}>SERVICES</th>
+                            <th style={{ width: '10%', textAlign: 'center' }}>METHOD</th>
                             <th style={{ width: '10%', textAlign: 'center' }}>DATE</th>
                             <th style={{ width: '8%', textAlign: 'center' }}>TOTAL</th>
                             <th className="centered-cell" style={{ width: '11%', textAlign: 'center' }}>ACTIONS</th>
@@ -119,6 +120,17 @@ function InvoiceHistory({ invoices, setInvoices }) {
                                     style={{ maxWidth: '250px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'center' }}
                                 >
                                     {(inv.services || inv.items)?.filter(i => i && i.name).map(i => i.name).join(", ") || "No services"}
+                                </td>
+                                <td data-label="METHOD" style={{ textAlign: 'center', fontSize: '0.85rem' }}>
+                                    <span style={{ 
+                                        padding: '4px 8px', 
+                                        borderRadius: '4px', 
+                                        background: inv.paymentMethod === 'Online' ? 'rgba(74, 222, 128, 0.1)' : 'rgba(251, 113, 133, 0.1)',
+                                        color: inv.paymentMethod === 'Online' ? '#4ade80' : '#fb7185',
+                                        border: `1px solid ${inv.paymentMethod === 'Online' ? 'rgba(74, 222, 128, 0.2)' : 'rgba(251, 113, 133, 0.2)'}`
+                                    }}>
+                                        {inv.paymentMethod || "Cash"}
+                                    </span>
                                 </td>
                                 <td data-label="DATE" style={{ textAlign: 'center' }}>{inv.date || (inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('en-GB') : "N/A")}</td>
                                 <td data-label="AMOUNT" style={{ fontWeight: '600', color: 'var(--accent-gold)', textAlign: 'center' }}>₹{inv.totalAmount ?? inv.total ?? 0}</td>
@@ -141,7 +153,7 @@ function InvoiceHistory({ invoices, setInvoices }) {
                         })}
                         {currentItems.length === 0 && (
                             <tr>
-                                <td colSpan="8" style={{ textAlign: 'center', padding: '2rem' }}>No invoices found.</td>
+                                <td colSpan="9" style={{ textAlign: 'center', padding: '2rem' }}>No invoices found.</td>
                             </tr>
                         )}
                     </tbody>

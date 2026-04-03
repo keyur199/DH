@@ -8,6 +8,7 @@ function Billing({ setInvoices, setCustomers, services, setServices }) {
   const [customer, setCustomer] = useState("");
   const [mobile, setMobile] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [paymentMethod, setPaymentMethod] = useState("Cash");
 
   const [items, setItems] = useState([
     { name: "", qty: 1, price: 0 }
@@ -58,7 +59,8 @@ function Billing({ setInvoices, setCustomers, services, setServices }) {
         customerName: customer,
         mobileNumber: mobile,
         services: items.map(i => ({ name: i.name, quantity: i.qty, price: i.price })),
-        date: date
+        date: date,
+        paymentMethod: paymentMethod
     };
 
     try {
@@ -110,9 +112,28 @@ function Billing({ setInvoices, setCustomers, services, setServices }) {
               border: '1px solid rgba(255,255,255,0.1)', 
               color: 'white', 
               padding: '12px', 
-              borderRadius: '10px' 
+              borderRadius: '10px',
+              fontFamily: 'inherit'
             }}
           />
+          <select 
+            value={paymentMethod} 
+            onChange={(e) => setPaymentMethod(e.target.value)}
+            className="payment-select-premium"
+            style={{
+              width: '100%',
+              background: 'rgba(255,255,255,0.02)', 
+              border: '1px solid rgba(255,255,255,0.1)', 
+              color: 'white', 
+              padding: '12px', 
+              borderRadius: '10px',
+              outline: 'none',
+              cursor: 'pointer'
+            }}
+          >
+            <option value="Cash">💵 Cash Payment</option>
+            <option value="Online">💳 Online Payment</option>
+          </select>
         </div>
 
         <div className="services-box">

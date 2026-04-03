@@ -12,7 +12,8 @@ const appointmentSchema = mongoose.Schema({
     time: { type: String, required: true },
     services: [serviceSchema],
     totalAmount: { type: Number, default: 0 },
-    status: { type: String, enum: ['Pending', 'Confirmed', 'Completed', 'Cancelled'], default: 'Pending' }
+    status: { type: String, enum: ['Pending', 'Confirmed', 'Completed', 'Cancelled'], default: 'Pending' },
+    paymentMethod: { type: String, enum: ["Cash", "Online"], default: "Cash" }
 }, { timestamps: true });
 
 export default mongoose.model("Appointment", appointmentSchema);

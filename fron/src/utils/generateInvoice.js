@@ -105,7 +105,10 @@ export const downloadPDF = async (invoice, shouldSave = true) => {
    const displayId = (invoice.invoiceId || (invoice.id ? String(invoice.id) : (invoice._id ? invoice._id.toString().slice(-2).toUpperCase() : "01"))).replace("INV-", "").padStart(2, "0");
 
    doc.setFontSize(9); doc.text("Date : " + displayDate, 185, 85, { align: "right" });
-   doc.text("Invoice No : " + displayId, 185, 93, { align: "right" });
+   doc.text("Invoice No : " + displayId, 185, 92, { align: "right" });
+   doc.setFont("helvetica", "bold");
+   doc.text("Method : " + (invoice.paymentMethod || "Cash"), 185, 99, { align: "right" });
+   doc.setFont("helvetica", "normal");
 
    let y = 110;
    doc.setFillColor(25, 25, 25); doc.rect(20, y, 170, 10, "F");
@@ -167,7 +170,7 @@ export const sendWhatsApp = async (invoice) => {
          await navigator.share({
             files: [pdfFile],
             title: `Invoice ${displayId}`,
-            text: `💎 *DH MAKEUP STUDIO*\n\nInvoice for *${invoice.customerName || "Customer"}* is attached.`
+            text: `💎 *DH MAKEUP STUDIO*\n\nInvoice for *${invoice.customerName || "Customer"}* is attached.\n\n💰 *Payment:* ${invoice.paymentMethod || "Cash"}`
          });
          return; 
       } catch (err) {
@@ -189,7 +192,7 @@ export const sendWhatsApp = async (invoice) => {
       });
       const data = await response.json();
       if (data.success && data.url) {
-         const directLinkMsg = `💎 *DH MAKEUP STUDIO*\n\nInvoice *INV-${displayId}* for *${invoice.customerName || "Customer"}* is ready!\n\n📥 *DIRECT DOWNLOAD PDF:* \n${data.url}\n\n📥 **PDF SENT DIRECTLY:** (Local copy saved). \n⚠️ Please attach the PDF now to this chat.`;
+         const directLinkMsg = `💎 *DH MAKEUP STUDIO*\n\nInvoice *INV-${displayId}* for *${invoice.customerName || "Customer"}* is ready!\n\n💰 *Payment:* ${invoice.paymentMethod || "Cash"}\n\n📥 *DIRECT DOWNLOAD PDF:* \n${data.url}\n\n📥 **PDF SENT DIRECTLY:** (Local copy saved). \n⚠️ Please attach the PDF now to this chat.`;
          window.open(`https://wa.me/${phone}?text=${encodeURIComponent(directLinkMsg)}`, '_blank');
          return;
       }
@@ -199,6 +202,6 @@ export const sendWhatsApp = async (invoice) => {
 
    // 3. DIAMOND MASTER FALLBACK (PROPER)
    doc.save(fileName); 
-   const masterMsg = `💎 *DH MAKEUP STUDIO*\n\nInvoice *INV-${displayId}* for *${invoice.customerName || "Customer"}* is ready!\n\n📥 **PDF SENT DIRECTLY:** (Local copy saved). \n⚠️ Please attach the PDF now to this chat.`;
+   const masterMsg = `💎 *DH MAKEUP STUDIO*\n\nInvoice *INV-${displayId}* for *${invoice.customerName || "Customer"}* is ready!\n\n💰 *Payment:* ${invoice.paymentMethod || "Cash"}\n\n📥 **PDF SENT DIRECTLY:** (Local copy saved). \n⚠️ Please attach the PDF now to this chat.`;
    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(masterMsg)}`, '_blank');
 };

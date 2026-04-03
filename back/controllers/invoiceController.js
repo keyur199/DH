@@ -8,10 +8,10 @@ import { generateInvoicePDF } from '../utils/pdfUtils.js';
 
 export const createInvoice = async (req, res) => {
     try {
-        const { customerName, mobileNumber, services, date } = req.body;
+        const { customerName, mobileNumber, services, date, paymentMethod } = req.body;
 
         if (!customerName || !mobileNumber || !services || services.length === 0 || !date) {
-            return sendBadRequestResponse(res, "Customer Name, Mobile Number, Date, and at least one Service are required");
+            return sendBadRequestResponse(res, "Customer Name, Mobile Number, Date, Payment Method and at least one Service are required");
         }
 
         let totalAmount = 0;
@@ -30,6 +30,7 @@ export const createInvoice = async (req, res) => {
             services,
             totalAmount,
             date,
+            paymentMethod: paymentMethod || "Cash",
             invoiceId: nextInvoiceId,
             appointmentId: req.body.appointmentId || null
         });
@@ -121,6 +122,7 @@ export const updateInvoice = async (req, res) => {
 
         if (customerName) existingInvoice.customerName = customerName;
         if (mobileNumber) existingInvoice.mobileNumber = mobileNumber;
+        if (req.body.paymentMethod) existingInvoice.paymentMethod = req.body.paymentMethod;
         existingInvoice.totalAmount = totalAmount;
 
         // 3. DIAMOND MASTER FALLBACK (PROPER)
