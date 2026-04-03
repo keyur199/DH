@@ -6214,3 +6214,34 @@ body.theme-white .filter-group label {
         justify-content: center !important;
     }
 }
+
+/* ============================================================ */
+/* BOUTIQUE PERFECTION: 440PX MOBILE LOCKDOWN                   */
+/* ============================================================ */
+@media (max-width: 440px) {
+    .boutique-dual-row {
+        flex-direction: column !important;
+        gap: 20px !important;
+    }
+
+    .boutique-modal-edit {
+        width: 98vw !important;
+        max-width: 420px !important;
+        padding: 24px 15px !important;
+    }
+
+    .form-group-boutique {
+        width: 100% !important;
+        flex: none !important;
+    }
+
+    .payment-toggle-boutique {
+        height: 52px !important;
+        margin-top: 5px !important;
+    }
+
+    .payment-btn-boutique {
+        font-size: 0.9rem !important;
+        letter-spacing: 0.5px !important;
+    }
+}
