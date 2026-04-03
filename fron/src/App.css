@@ -6236,12 +6236,26 @@ body.theme-white .filter-group label {
     }
 
     .payment-toggle-boutique {
-        height: 52px !important;
-        margin-top: 5px !important;
+        height: 50px !important; /* FIXED LOCK */
+        width: 100% !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 14px !important;
+        padding: 5px !important;
+        gap: 5px !important;
+        box-sizing: border-box !important;
     }
 
     .payment-btn-boutique {
-        font-size: 0.9rem !important;
+        height: 100% !important;
+        flex: 1 !important;
+        font-size: 0.85rem !important;
         letter-spacing: 0.5px !important;
+        border-radius: 10px !important;
+        padding: 0 !important; /* Center content vertically */
+    }
+
+    .payment-btn-boutique.active {
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4) !important;
     }
 }
