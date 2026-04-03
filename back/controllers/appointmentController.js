@@ -1,5 +1,6 @@
 import Appointment from "../models/appointmentModel.js";
-import Invoice from "../models/invoiceModel.js"; // Need this to cleanup invoices
+import Invoice from "../models/invoiceModel.js";
+import mongoose from "mongoose";
 import { ThrowError } from "../utils/ErrorUtils.js";
 import { sendSuccessResponse, sendErrorResponse, sendBadRequestResponse, sendCreatedResponse } from '../utils/ResponseUtils.js';
 
@@ -90,6 +91,30 @@ export const updateAppointment = async (req, res) => {
         existingAppointment.totalAmount = totalAmount;
 
         await existingAppointment.save();
+
+        // Sync with matching invoices (robust check)
+        const updateFields = {};
+        if (customerName) updateFields.customerName = customerName;
+        if (mobileNumber) updateFields.mobileNumber = mobileNumber;
+        if (date) updateFields.date = date;
+        if (services) {
+            updateFields.services = services;
+            updateFields.totalAmount = totalAmount;
+        }
+        if (paymentMethod) updateFields.paymentMethod = paymentMethod;
+
+        if (Object.keys(updateFields).length > 0) {
+            // Use both the raw string ID and the ObjectId for safety in matching
+            await Invoice.updateMany(
+                { 
+                    $or: [
+                        { appointmentId: id },
+                        { appointmentId: mongoose.isValidObjectId(id) ? new mongoose.Types.ObjectId(id) : null }
+                    ].filter(q => q.appointmentId !== null)
+                },
+                { $set: updateFields }
+            );
+        }
 
         return sendSuccessResponse(res, "Appointment updated successfully", existingAppointment);
     } catch (error) {
