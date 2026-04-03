@@ -1,14 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { logoBase64 } from "../utils/logoData";
 import { IconMenu, IconX } from "./Icons";
 
 function Navbar({ theme, setTheme, setIsAuthenticated, userName }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isFlipping, setIsFlipping] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
 
     const page = location.pathname.replace("/", "") || "dashboard";
+
+    useEffect(() => {
+        setIsFlipping(true);
+        const timer = setTimeout(() => setIsFlipping(false), 800);
+        return () => clearTimeout(timer);
+    }, [isMenuOpen]);
 
     const handleLogout = () => {
         sessionStorage.clear();
@@ -26,18 +33,18 @@ function Navbar({ theme, setTheme, setIsAuthenticated, userName }) {
             {/* Mobile Header Toggle */}
             <div className="mobile-toggle-header">
                 <div className="mini-logo-box">
-                    <img src={logoBase64} alt="L" className="mini-logo-img" />
+                    <img src={logoBase64} alt="L" className={`mini-logo-img ${isFlipping ? "logo-flip-animation" : ""}`} />
                 </div>
                 <button className="menu-toggle-btn" onClick={() => setIsMenuOpen(!isMenuOpen)}>
                     {isMenuOpen ? <IconX size={24} color="var(--accent-gold)" /> : <IconMenu size={24} color="var(--accent-gold)" />}
                 </button>
             </div>
 
-            <div className={`sidebar ${isMenuOpen ? "open" : ""}`}>
+            <div className={`sidebar ${isMenuOpen ? "open" : ""}`} onClick={() => setIsFlipping(true)}>
                 <div className="logo">
                     <div className="nav-logo-container">
                         {logoBase64 ? (
-                            <img src={logoBase64} alt="Salon Logo" className="navbar-logo" />
+                            <img src={logoBase64} alt="Salon Logo" className={`navbar-logo ${isFlipping ? "logo-flip-animation" : ""}`} />
                         ) : (
                             <div className="logo-fallback">DH</div>
                         )}
