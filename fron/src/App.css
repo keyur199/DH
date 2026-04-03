@@ -4717,8 +4717,8 @@ body.theme-white .filter-group label {
 
 /* BOUTIQUE MODAL DESIGN SYSTEM */
 .boutique-modal-edit {
-    width: 92% !important;
-    max-width: 500px !important;
+    width: 95% !important;
+    max-width: 550px !important;
     background: #111 !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 28px !important;
@@ -4772,6 +4772,45 @@ body.theme-white .filter-group label {
 .boutique-input:focus {
     border-color: var(--accent-gold) !important;
     background: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* PREMIUM PAYMENT TOGGLE */
+.payment-toggle-boutique {
+    display: flex !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px !important;
+    padding: 4px !important;
+    gap: 4px !important;
+}
+
+.payment-btn-boutique {
+    flex: 1 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    padding: 8px 4px !important;
+    white-space: nowrap !important;
+}
+
+.payment-btn-boutique.active {
+    background: var(--accent-gold) !important;
+    color: #000 !important;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25) !important;
+}
+
+.payment-btn-boutique:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: #fff !important;
 }
 
 .boutique-dual-row {
@@ -4887,7 +4926,7 @@ body.theme-white .filter-group label {
     cursor: pointer !important;
 }
 
-@media (max-width: 425px) {
+@media (max-width: 480px) {
 
         .modal-overlay {
             padding: 40px 4px 120px !important; /* MINIMAL EXTERNAL BUFFER */

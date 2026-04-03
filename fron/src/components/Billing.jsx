@@ -116,24 +116,22 @@ function Billing({ setInvoices, setCustomers, services, setServices }) {
               fontFamily: 'inherit'
             }}
           />
-          <select 
-            value={paymentMethod} 
-            onChange={(e) => setPaymentMethod(e.target.value)}
-            className="payment-select-premium"
-            style={{
-              width: '100%',
-              background: 'rgba(255,255,255,0.02)', 
-              border: '1px solid rgba(255,255,255,0.1)', 
-              color: 'white', 
-              padding: '12px', 
-              borderRadius: '10px',
-              outline: 'none',
-              cursor: 'pointer'
-            }}
-          >
-            <option value="Cash">💵 Cash Payment</option>
-            <option value="Online">💳 Online Payment</option>
-          </select>
+          <div className="payment-toggle-boutique" style={{ width: '100%', height: '48px' }}>
+            <button 
+              className={`payment-btn-boutique ${paymentMethod === 'Cash' ? 'active' : ''}`}
+              onClick={() => setPaymentMethod('Cash')}
+              type="button"
+            >
+              💵 Cash
+            </button>
+            <button 
+              className={`payment-btn-boutique ${paymentMethod === 'Online' ? 'active' : ''}`}
+              onClick={() => setPaymentMethod('Online')}
+              type="button"
+            >
+              💳 Online
+            </button>
+          </div>
         </div>
 
         <div className="services-box">

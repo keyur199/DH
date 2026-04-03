@@ -304,15 +304,23 @@ function Appointments({
             value={time}
             onChange={(e) => setTime(e.target.value)}
           />
-          <select 
-            value={paymentMethod} 
-            onChange={(e) => setPaymentMethod(e.target.value)}
-            className="boutique-input"
-            style={{ appearance: 'none', background: 'rgba(255,255,255,0.02)', color: 'white' }}
-          >
-            <option value="Cash" style={{ background: '#1a1a1a' }}>💵 Cash</option>
-            <option value="Online" style={{ background: '#1a1a1a' }}>💳 Online</option>
-          </select>
+          <div className="form-group-boutique" style={{ flex: 1.2 }}>
+            <label className="boutique-label" style={{ marginBottom: '8px', display: 'block' }}>PAYMENT METHOD</label>
+            <div className="payment-toggle-boutique">
+              <button 
+                className={`payment-btn-boutique ${paymentMethod === 'Cash' ? 'active' : ''}`}
+                onClick={() => setPaymentMethod('Cash')}
+              >
+                💵 Cash
+              </button>
+              <button 
+                className={`payment-btn-boutique ${paymentMethod === 'Online' ? 'active' : ''}`}
+                onClick={() => setPaymentMethod('Online')}
+              >
+                💳 Online
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="services-section">
@@ -626,17 +634,22 @@ function Appointments({
                     onChange={(e) => setEditTime(e.target.value)}
                   />
                 </div>
-                <div className="form-group-boutique flex-1">
+                <div className="form-group-boutique" style={{ flex: 1.4 }}>
                   <label className="boutique-label">PAYMENT METHOD</label>
-                  <select 
-                    className="boutique-input"
-                    value={editPaymentMethod} 
-                    onChange={(e) => setEditPaymentMethod(e.target.value)}
-                    style={{ appearance: 'none', background: 'rgba(255,255,255,0.02)', color: 'white' }}
-                  >
-                    <option value="Cash" style={{ background: '#1a1a1a' }}>💵 Cash</option>
-                    <option value="Online" style={{ background: '#1a1a1a' }}>💳 Online</option>
-                  </select>
+                  <div className="payment-toggle-boutique">
+                    <button 
+                      className={`payment-btn-boutique ${editPaymentMethod === 'Cash' ? 'active' : ''}`}
+                      onClick={() => setEditPaymentMethod('Cash')}
+                    >
+                      💵 Cash
+                    </button>
+                    <button 
+                      className={`payment-btn-boutique ${editPaymentMethod === 'Online' ? 'active' : ''}`}
+                      onClick={() => setEditPaymentMethod('Online')}
+                    >
+                      💳 Online
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
