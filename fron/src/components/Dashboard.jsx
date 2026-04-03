@@ -9,6 +9,8 @@ function Dashboard() {
 
   const [stats, setStats] = useState({
     totalRevenue: 0,
+    cashRevenue: 0,
+    onlineRevenue: 0,
     totalInvoices: 0,
     totalCustomers: 0
   });
@@ -137,11 +139,20 @@ function Dashboard() {
           <div className="card-glow gold"></div>
           <div className="card-icon"><IconTrendingUp size={34} color="#d4af37" /></div>
           <div className="card-title-row">
-            <h3>Revenue</h3>
-            <span className="boutique-badge gold">{stats.totalRevenue.toLocaleString()}</span>
+            <h3>Total Revenue</h3>
+            <span className="boutique-badge gold">₹ {stats.totalRevenue.toLocaleString()}</span>
           </div>
-          <span className="card-trend">{startDate || endDate ? "Filtered" : "All Time"} Income</span>
-
+          <div className="revenue-split">
+            <div className="split-item" title="Cash Payments">
+              <span className="split-dot cash"></span>
+              <span className="split-label">CASH: ₹ {Number(stats.cashRevenue || 0).toLocaleString()}</span>
+            </div>
+            <div className="split-item" title="Online Payments">
+              <span className="split-dot online"></span>
+              <span className="split-label">ONLINE: ₹ {Number(stats.onlineRevenue || 0).toLocaleString()}</span>
+            </div>
+          </div>
+          <span className="card-trend">{startDate || endDate ? "Filtered" : "All Time"} Overview</span>
         </div>
 
         <div className="card invoices shadow-rose">

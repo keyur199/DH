@@ -21,6 +21,14 @@ export const createInvoice = async (req, res) => {
             totalAmount += (qty * price);
         });
 
+        // Prevent Duplicate Invoices for the same appointment
+        if (req.body.appointmentId) {
+            const existing = await Invoice.findOne({ appointmentId: req.body.appointmentId });
+            if (existing) {
+                return sendSuccessResponse(res, "Invoice already exists for this appointment", existing);
+            }
+        }
+
         const invoiceCount = await Invoice.countDocuments();
         const nextInvoiceId = `${(invoiceCount + 1).toString().padStart(2, "0")}`;
 

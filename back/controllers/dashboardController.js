@@ -21,7 +21,25 @@ export const getDashboardStats = async (req, res) => {
             {
                 $group: {
                     _id: null,
-                    totalRevenue: { $sum: "$totalAmount" },
+                    totalRevenue: { $sum: { $ifNull: ["$totalAmount", 0] } },
+                    cashRevenue: {
+                        $sum: {
+                            $cond: [
+                                { $ne: ["$paymentMethod", "Online"] },
+                                { $ifNull: ["$totalAmount", 0] },
+                                0
+                            ]
+                        }
+                    },
+                    onlineRevenue: {
+                        $sum: {
+                            $cond: [
+                                { $eq: ["$paymentMethod", "Online"] },
+                                { $ifNull: ["$totalAmount", 0] },
+                                0
+                            ]
+                        }
+                    },
                     totalInvoices: { $sum: 1 },
                     uniqueCustomers: { $addToSet: "$mobileNumber" }
                 }
@@ -29,15 +47,19 @@ export const getDashboardStats = async (req, res) => {
             {
                 $project: {
                     _id: 0,
-                    totalRevenue: 1,
+                    totalRevenue: { $ifNull: ["$totalRevenue", 0] },
+                    cashRevenue: { $ifNull: ["$cashRevenue", 0] },
+                    onlineRevenue: { $ifNull: ["$onlineRevenue", 0] },
                     totalInvoices: 1,
-                    totalCustomers: { $size: "$uniqueCustomers" }
+                    totalCustomers: { $size: { $ifNull: ["$uniqueCustomers", []] } }
                 }
             }
         ]);
 
         const defaultStats = {
             totalRevenue: 0,
+            cashRevenue: 0,
+            onlineRevenue: 0,
             totalInvoices: 0,
             totalCustomers: 0
         };

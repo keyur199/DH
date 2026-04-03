@@ -116,10 +116,15 @@ function Appointments({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [appointmentToDelete, setAppointmentToDelete] = useState(null);
 
+  const [statusLoadingId, setStatusLoadingId] = useState(null);
+
   /* COMPLETE APPOINTMENT (Links Invoice) */
   const completeAppointment = async (id) => {
+    if (statusLoadingId === id) return;
     const appnt = appointments.find(a => a._id === id);
     if (!appnt) return;
+    
+    setStatusLoadingId(id);
     try {
       const invoiceData = {
         customerName: appnt.customerName,
@@ -129,13 +134,16 @@ function Appointments({
         appointmentId: id,
         paymentMethod: appnt.paymentMethod || "Cash"
       };
+      
       const invRes = await apiRequest("/createInvoice", "POST", invoiceData);
       if (invRes.success) {
         await apiRequest(`/updateAppointment/${id}`, "PUT", { status: "Completed" });
-        fetchAppointments();
+        await fetchAppointments();
       }
     } catch (error) {
       showAlert("Operation Failed", "Failed to complete appointment: " + error.message);
+    } finally {
+      setStatusLoadingId(null);
     }
   };
 
@@ -403,6 +411,7 @@ function Appointments({
                 <th className="col-serv">SERVICES</th>
                 <th className="col-date">DATE</th>
                 <th className="col-time">TIME</th>
+                <th className="col-pay">PAYMENT</th>
                 <th className="col-stat centered-cell">STATUS</th>
                 <th className="col-acts centered-cell">ACTIONS</th>
               </tr>
@@ -426,7 +435,7 @@ function Appointments({
                 if (currentItems.length === 0) {
                   return (
                     <tr>
-                      <td colSpan="8" style={{ textAlign: 'center', padding: '40px', opacity: 0.5 }}>
+                      <td colSpan="9" style={{ textAlign: 'center', padding: '40px', opacity: 0.5 }}>
                         No matching appointments found.
                       </td>
                     </tr>
@@ -446,6 +455,19 @@ function Appointments({
                     </td>
                     <td data-label="DATE" style={{ whiteSpace: "nowrap", fontSize: '0.85rem', textAlign: 'center' }}><span>{a.date}</span></td>
                     <td data-label="TIME" style={{ whiteSpace: "nowrap", fontSize: '0.85rem' }}><span>{formatTime(a.time)}</span></td>
+                    <td data-label="PAYMENT" style={{ textAlign: 'center' }}>
+                      <span style={{ 
+                        fontSize: '0.75rem', 
+                        fontWeight: '700', 
+                        padding: '4px 8px', 
+                        borderRadius: '6px',
+                        background: a.paymentMethod === 'Online' ? 'rgba(96, 165, 250, 0.1)' : 'rgba(212, 175, 55, 0.1)',
+                        color: a.paymentMethod === 'Online' ? '#60a5fa' : 'var(--accent-gold)',
+                        border: `1px solid ${a.paymentMethod === 'Online' ? 'rgba(96, 165, 250, 0.2)' : 'rgba(212, 175, 55, 0.2)'}`
+                      }}>
+                        {a.paymentMethod === 'Online' ? '💳 Online' : '💵 Cash'}
+                      </span>
+                    </td>
                     <td data-label="STATUS" className="centered-cell">
                       <div className="status-wrapper">
                         {a.status === "Completed" ? (
@@ -458,12 +480,15 @@ function Appointments({
                           >Completed</button>
                         ) : (
                           <button
-                            className="status-btn pending"
+                            className={`status-btn pending ${statusLoadingId === a._id ? 'loading' : ''}`}
+                            disabled={statusLoadingId === a._id}
                             title="Click to mark as Completed"
                             onClick={() => completeAppointment(a._id)}
-                            onMouseOver={(e) => { e.target.innerText = 'Complete'; }}
-                            onMouseOut={(e) => { e.target.innerText = 'Pending'; }}
-                          >Pending</button>
+                            onMouseOver={(e) => { if (statusLoadingId !== a._id) e.target.innerText = 'Complete'; }}
+                            onMouseOut={(e) => { if (statusLoadingId !== a._id) e.target.innerText = 'Pending'; }}
+                          >
+                            {statusLoadingId === a._id ? '⏳ Billing...' : 'Pending'}
+                          </button>
                         )}
                       </div>
                     </td>
