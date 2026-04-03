@@ -76,7 +76,7 @@ function InvoiceHistory({ invoices, setInvoices }) {
         <div className="history-page">
             <div className="dashboard-header-redux">
                 <h2 className="page-title">
-                    Invoice History 
+                    Invoice History
                     <span className="badge-count">{totalItems}</span>
                 </h2>
                 <div className="dashboard-filters-wrapper">
@@ -110,45 +110,45 @@ function InvoiceHistory({ invoices, setInvoices }) {
                         {currentItems.map((inv, idx) => {
                             if (!inv) return null;
                             return (
-                            <tr key={inv._id || idx} className="premium-row">
-                                <td data-label="#" style={{ textAlign: 'center' }}>{idx + 1 + indexOfFirstItem}</td>
-                                <td data-label="INV ID" style={{ fontSize: '0.85rem', color: 'var(--accent-gold)', textAlign: 'center' }}>{inv.invoiceId || `#${(inv._id || "********").substring(0, 8)}`}</td>
-                                <td data-label="CUSTOMER" style={{ fontWeight: '500', textAlign: 'center' }}>{inv.customerName}</td>
-                                <td data-label="MOBILE" style={{ textAlign: 'center' }}>{inv.mobileNumber || inv.mobile}</td>
-                                <td data-label="SERVICES"
-                                    title={(inv.services || inv.items)?.filter(i => i && i.name).map(i => i.name).join(", ") || "No services"}
-                                    style={{ maxWidth: '250px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'center' }}
-                                >
-                                    {(inv.services || inv.items)?.filter(i => i && i.name).map(i => i.name).join(", ") || "No services"}
-                                </td>
-                                <td data-label="METHOD" style={{ textAlign: 'center', fontSize: '0.85rem' }}>
-                                    <span style={{ 
-                                        padding: '4px 8px', 
-                                        borderRadius: '4px', 
-                                        background: inv.paymentMethod === 'Online' ? 'rgba(74, 222, 128, 0.1)' : 'rgba(251, 113, 133, 0.1)',
-                                        color: inv.paymentMethod === 'Online' ? '#4ade80' : '#fb7185',
-                                        border: `1px solid ${inv.paymentMethod === 'Online' ? 'rgba(74, 222, 128, 0.2)' : 'rgba(251, 113, 133, 0.2)'}`
-                                    }}>
-                                        {inv.paymentMethod || "Cash"}
-                                    </span>
-                                </td>
-                                <td data-label="DATE" style={{ textAlign: 'center' }}>{inv.date || (inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('en-GB') : "N/A")}</td>
-                                <td data-label="AMOUNT" style={{ fontWeight: '600', color: 'var(--accent-gold)', textAlign: 'center' }}>₹{inv.totalAmount ?? inv.total ?? 0}</td>
-                                <td data-label="ACTIONS" className="actions-cell">
-                                    <div className="actions">
-                                        <button className="action-btn" title="Download PDF" onClick={() => downloadPDF(inv)}>
-                                            <IconPDF size={18} color="#60a5fa" />
-                                        </button>
-                                        <button className="action-btn" title="Send WhatsApp" onClick={() => sendWhatsApp(inv)}>
-                                            <IconWhatsApp size={18} color="#4ade80" />
-                                        </button>
-                                        <button className="action-btn" title="Delete Invoice" onClick={() => triggerDeleteModal(inv)}>
-                                            <IconTrash size={18} color="#fb7185" />
-                                        </button>
-                                    </div>
-                                </td>
+                                <tr key={inv._id || idx} className="premium-row">
+                                    <td data-label="#" style={{ textAlign: 'center' }}>{idx + 1 + indexOfFirstItem}</td>
+                                    <td data-label="INV ID" style={{ fontSize: '0.85rem', color: 'var(--accent-gold)', textAlign: 'center' }}>{inv.invoiceId || `#${(inv._id || "********").substring(0, 8)}`}</td>
+                                    <td data-label="CUSTOMER" style={{ fontWeight: '500', textAlign: 'center' }}>{inv.customerName}</td>
+                                    <td data-label="MOBILE" style={{ textAlign: 'center' }}>{inv.mobileNumber || inv.mobile}</td>
+                                    <td data-label="SERVICES"
+                                        title={(inv.services || inv.items)?.filter(i => i && i.name).map(i => i.name).join(", ") || "No services"}
+                                        style={{ maxWidth: '250px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'center' }}
+                                    >
+                                        {(inv.services || inv.items)?.filter(i => i && i.name).map(i => i.name).join(", ") || "No services"}
+                                    </td>
+                                    <td data-label="METHOD" style={{ textAlign: 'center', fontSize: '0.85rem' }}>
+                                        <span style={{
+                                            padding: '4px 8px',
+                                            borderRadius: '4px',
+                                            background: inv.paymentMethod === 'Online' ? 'rgba(74, 222, 128, 0.1)' : 'rgba(251, 113, 133, 0.1)',
+                                            color: inv.paymentMethod === 'Online' ? '#4ade80' : '#fb7185',
+                                            border: `1px solid ${inv.paymentMethod === 'Online' ? 'rgba(74, 222, 128, 0.2)' : 'rgba(251, 113, 133, 0.2)'}`
+                                        }}>
+                                            {inv.paymentMethod || "Cash"}
+                                        </span>
+                                    </td>
+                                    <td data-label="DATE" style={{ textAlign: 'center' }}>{inv.date || (inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('en-GB') : "N/A")}</td>
+                                    <td data-label="AMOUNT" style={{ fontWeight: '600', color: 'var(--accent-gold)', textAlign: 'center' }}>₹{inv.totalAmount ?? inv.total ?? 0}</td>
+                                    <td data-label="ACTIONS" className="actions-cell">
+                                        <div className="actions">
+                                            <button className="action-btn" title="Download PDF" onClick={() => downloadPDF(inv)}>
+                                                <IconPDF size={18} color="#60a5fa" />
+                                            </button>
+                                            <button className="action-btn" title="Send WhatsApp" onClick={() => sendWhatsApp(inv)}>
+                                                <IconWhatsApp size={18} color="#4ade80" />
+                                            </button>
+                                            <button className="action-btn" title="Delete Invoice" onClick={() => triggerDeleteModal(inv)}>
+                                                <IconTrash size={18} color="#fb7185" />
+                                            </button>
+                                        </div>
+                                    </td>
 
-                            </tr>
+                                </tr>
                             );
                         })}
                         {currentItems.length === 0 && (
@@ -162,8 +162,8 @@ function InvoiceHistory({ invoices, setInvoices }) {
                 {/* Pagination Controls */}
                 {totalPages > 1 && (
                     <div className="pagination-wrapper">
-                        <button 
-                            className="page-btn mobile-compact" 
+                        <button
+                            className="page-btn mobile-compact"
                             disabled={currentPage === 1}
                             onClick={() => setCurrentPage(prev => prev - 1)}
                         >
@@ -172,8 +172,8 @@ function InvoiceHistory({ invoices, setInvoices }) {
                         <div className="page-info">
                             Page <span>{currentPage}</span> of <span>{totalPages}</span>
                         </div>
-                        <button 
-                            className="page-btn mobile-compact" 
+                        <button
+                            className="page-btn mobile-compact"
                             disabled={currentPage === totalPages}
                             onClick={() => setCurrentPage(prev => prev + 1)}
                         >
